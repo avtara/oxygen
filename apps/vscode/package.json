@@ -1,0 +1,197 @@
+{
+	"name": "oxygen-particle-editor",
+	"displayName": "Oxygen Particle Editor",
+	"description": "Bedrock particle IDE: an editor that shows what the game actually renders, plus Molang language features for particle files",
+	"version": "0.1.0",
+	"private": true,
+	"publisher": "hydrogen",
+	"icon": "media/icon.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/dev-hydrogen/oxygen.git",
+		"directory": "apps/vscode"
+	},
+	"homepage": "https://github.com/dev-hydrogen/oxygen#readme",
+	"bugs": "https://github.com/dev-hydrogen/oxygen/issues",
+	"keywords": ["minecraft", "bedrock", "particles", "molang", "snowstorm"],
+	"license": "GPL-3.0-or-later",
+	"engines": {
+		"vscode": "^1.95.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Visualization"
+	],
+	"main": "./dist/extension.js",
+	"activationEvents": [
+		"workspaceContains:**/particles/*.json",
+		"onLanguage:json",
+		"onLanguage:jsonc"
+	],
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": true
+		},
+		"virtualWorkspaces": true
+	},
+	"contributes": {
+		"customEditors": [
+			{
+				"viewType": "oxygen.particleEditor",
+				"displayName": "Oxygen",
+				"selector": [
+					{
+						"filenamePattern": "*.particle.json"
+					}
+				],
+				"priority": "default"
+			},
+			{
+				"viewType": "oxygen.particleEditor.option",
+				"displayName": "Oxygen",
+				"selector": [
+					{
+						"filenamePattern": "**/particles/**/*.json"
+					}
+				],
+				"priority": "option"
+			}
+		],
+		"views": {
+			"explorer": [
+				{
+					"type": "webview",
+					"id": "oxygen.preview",
+					"name": "Oxygen preview",
+					"when": "oxygen.particleFileActive"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "oxygen.openExample",
+				"title": "Open example…",
+				"category": "Oxygen",
+				"icon": "$(library)"
+			},
+			{
+				"command": "oxygen.openInOxygen",
+				"title": "Open in Oxygen",
+				"category": "Oxygen",
+				"icon": "$(sparkle)"
+			},
+			{
+				"command": "oxygen.openAsText",
+				"title": "Open as text",
+				"category": "Oxygen",
+				"icon": "$(go-to-file)"
+			},
+			{
+				"command": "oxygen.showPreview",
+				"title": "Show preview",
+				"category": "Oxygen"
+			},
+			{
+				"command": "oxygen.codeMode",
+				"title": "Code mode: the file as text with a floating preview",
+				"category": "Oxygen",
+				"icon": "$(code)"
+			},
+			{
+				"command": "oxygen.editorMode",
+				"title": "Editor mode: Inspector and tool tabs",
+				"category": "Oxygen",
+				"icon": "$(layout)"
+			},
+			{
+				"command": "oxygen.semanticDiff",
+				"title": "Show what changed (semantic diff)",
+				"category": "Oxygen",
+				"icon": "$(diff)"
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "oxygen.openInOxygen",
+					"when": "oxygen.particleFileActive && activeCustomEditorId != oxygen.particleEditor && activeCustomEditorId != oxygen.particleEditor.option && !isInDiffEditor",
+					"group": "navigation"
+				},
+				{
+					"command": "oxygen.openAsText",
+					"when": "activeCustomEditorId == oxygen.particleEditor || activeCustomEditorId == oxygen.particleEditor.option",
+					"group": "navigation"
+				},
+				{
+					"command": "oxygen.codeMode",
+					"when": "activeCustomEditorId == oxygen.particleEditor || activeCustomEditorId == oxygen.particleEditor.option",
+					"group": "navigation@1"
+				},
+				{
+					"command": "oxygen.editorMode",
+					"when": "activeCustomEditorId == oxygen.particleEditor || activeCustomEditorId == oxygen.particleEditor.option",
+					"group": "navigation@2"
+				},
+				{
+					"command": "oxygen.semanticDiff",
+					"when": "isInDiffEditor && resourceExtname == .json",
+					"group": "navigation"
+				}
+			]
+		},
+		"configuration": {
+			"title": "Oxygen",
+			"properties": {
+				"oxygen.theme": {
+					"type": "string",
+					"enum": ["vscode", "oxygen"],
+					"enumDescriptions": ["Use the colors of your VS Code theme", "Use Oxygen's own night palette"],
+					"default": "vscode",
+					"description": "Colors of the Oxygen editor and preview."
+				},
+				"oxygen.diagnostics.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show Molang and particle problems in particle JSON files opened as text."
+				},
+				"oxygen.semanticHighlighting.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Color Molang inside particle JSON strings."
+				}
+			}
+		},
+		"configurationDefaults": {
+			"workbench.editorAssociations": {
+				"git:/**/*.particle.json": "default",
+				"gitlens:/**/*.particle.json": "default",
+				"vscode-scm:/**/*.particle.json": "default",
+				"vscode-userdata:/**/*.particle.json": "default"
+			}
+		}
+	},
+	"scripts": {
+		"build": "node build.mjs",
+		"watch": "node build.mjs --watch",
+		"package": "node build.mjs && vsce package --no-dependencies",
+		"typecheck": "tsc --noEmit -p ."
+	},
+	"devDependencies": {
+		"@oxygen/effect": "workspace:*",
+		"@oxygen/format": "workspace:*",
+		"@oxygen/lang": "workspace:*",
+		"@oxygen/metadata": "workspace:*",
+		"@oxygen/ui": "workspace:*",
+		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"@types/vscode": "^1.95.0",
+		"@vscode/test-electron": "^3.1.0",
+		"@vscode/vsce": "^4.0.0",
+		"esbuild": "^0.28.2",
+		"jsonc-parser": "^3.3.1",
+		"molangjs": "workspace:*",
+		"svelte": "^5.57.2",
+		"typescript": "6.0.3",
+		"vite": "^8.3.4",
+		"wintersky": "workspace:*"
+	}
+}

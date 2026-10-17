@@ -1,0 +1,5 @@
+{
+	"format_version": 2,
+	"header": { "name": "Oxygen test RP", "description": "", "uuid": "0d5a8e6e-6a4a-4f58-9b5c-1f7f3f1a0001", "version": [1, 0, 0], "min_engine_version": [1, 21, 0] },
+	"modules": [{ "type": "resources", "uuid": "0d5a8e6e-6a4a-4f58-9b5c-1f7f3f1a0002", "version": [1, 0, 0] }]
+}

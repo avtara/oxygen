@@ -1,0 +1,44 @@
+# Changelog
+
+## Oxygen 0.1.0
+
+The first release of Oxygen, a ground-up rewrite of [Snowstorm](https://github.com/JannisX11/snowstorm) 3.2.2.
+It runs as a web app, a VS Code extension and a desktop app.
+
+### Highlights
+
+- A preview that behaves like the game, checked against Minecraft behaviour by behaviour. See
+  [how Oxygen matches the game](https://github.com/dev-hydrogen/oxygen/blob/main/docs/accuracy.md).
+- Molang editing with completion, hover help, plain-language problems, quick fixes and refactors.
+- Tools to understand an effect: the order everything runs in, particle inspection, step-by-step debugging,
+  value graphs and 30 seconds of history to scrub through.
+- An events graph across every effect involved, with steps, random choices and the values handed to child
+  effects.
+- Context inputs and named scenarios for effects that read variables from scripts or entities.
+- A scene around the effect: blocks to collide with, `.mcstructure` import, and a stand-in entity that walks a
+  path.
+- A Vibrant Visuals preview, including making particles glow and saving the texture set.
+- Seven window layouts, from a plain preview to a full debugging setup.
+- In the desktop app, deploying a pack to Minecraft and spawning the effect in your world.
+- 20 new examples, each checked in Minecraft.
+
+### Fixed compared with Snowstorm
+
+- Effects that place particles with a counter (circles, spirals, curtains) no longer collapse into one spot.
+- Blended and additive particles no longer cut dark shapes out of each other.
+- Temps (`t.*`) are shared between effects as in the game, so values reach the effects an event spawns.
+- Child effects are found in the pack (or among the examples) and play without loading each one by hand.
+- Looping no longer kills live particles (#91). Curve nodes can be Molang (#110), and `bezier_chain` holds its end
+  values (#123). Negative sizes hide the particle (#119), and a UV size of 0 samples a sliver (#118).
+- Collision uses real block shapes, not just a flat floor, and the kill plane is shown in the viewport (#81).
+- Spheres and discs spawn particles the way the game does, denser in the middle.
+- Colours, cutout transparency, facing modes, flipbooks and lighting match the game.
+- Particle caps and looping follow how the effect is started (`/particle`, a script or an entity).
+- Scenarios and pre-effect scripts replace the variable placeholder bar (#114).
+
+### Removed
+
+- The Vue 2 Snowstorm app. It remains in this repository's history, up to `f70fbb5`.
+- Quick Setup: the Inspector now lists every component with a switch to turn it on.
+- The variable placeholder bar: the Context panel replaces it.
+- The mobile and portrait layout.

@@ -1,0 +1,137 @@
+# Using Oxygen
+
+A tour of the editor and the usual tasks. Most of it works the same in the web app, VS Code and the desktop app;
+where they differ, it says so.
+
+## The window
+
+- **Top bar:** the menus, the command palette (Ctrl+K: every action, panel and layout by name) and Save. In the
+  desktop app it's also the window's title bar.
+- **Tabs:** every open effect has a tab. In VS Code, each effect opens in its own editor instead.
+- **Panels:** the viewport, the Inspector and the tool tabs (Expression, Problems, Context, Curves, Events,
+  Texture and more). Drag a panel's tab to move it, double-click it to fill the window, and bring back closed
+  panels from the View menu.
+- **Layouts:** the View menu resets the window to one of seven layouts, each set up for a job such as editing,
+  events, curves, lighting or debugging.
+- **Status bar:** problems, the number of live particles against the game's limit, emitters and time.
+
+## Opening and saving
+
+- **Web:** File › Open files, or Open resource pack folder to work on a whole pack. Chrome and Edge save straight
+  back to your files. Other browsers download the saved file. Share links (File › Copy share link) carry the
+  whole effect in the URL.
+- **VS Code:** open a particle file. `*.particle.json` files open in Oxygen; for others run *Open in Oxygen*.
+  VS Code handles saving and undo. Examples (*Oxygen: Open example…* or the Examples menu) open as new untitled
+  files, so saving one asks where to put it.
+- **Desktop:** open files or a pack folder. If a file changes outside Oxygen while it's open, Oxygen loads the
+  change, unless you have unsaved edits.
+
+Oxygen only changes the parts of a file you edit, so formatting, key order and anything it doesn't know about
+stay as they were.
+
+## The Inspector
+
+The Inspector lists every component of a particle effect, grouped into Emitter, Shape, Motion, Lifetime,
+Appearance and Logic.
+
+- **Turning components on and off.** Components the effect uses are open with their settings. The rest are
+  shown as single dimmed rows. Use the switch on a row to turn a component on or off. Turning one off and back on
+  restores what it had.
+- **Choosing a kind.** Some components come in kinds that exclude each other, like the emitter's rate (burst,
+  steady or manual) or its shape (point, sphere, box…). Pick the kind from the row's dropdown. Each kind keeps
+  its own settings, so you can try one and switch back without losing anything.
+- **The same goes for fields with modes,** like a colour that can be one colour, a gradient or per-channel
+  Molang: switching back brings back what you had.
+- **Categories or Phases.** The Phases view orders the fields by when the game runs them, with step numbers.
+
+## The viewport
+
+| Action | How |
+| --- | --- |
+| Play, pause | Space |
+| Restart | R |
+| Frame the particles | F |
+| Orbit | Drag |
+| Pan | Middle-drag or Shift+drag |
+| Look around and fly | Right-drag, with W A S D (Q down, E up) |
+| Zoom | Mouse wheel |
+| Inspect a particle | Click it |
+
+The toolbar picks how the effect is started (/particle, Script API or Entity), since the game treats them
+differently, and whether it repeats. *Classic*, *Vibrant* or *Split* picks the lighting. *Show* turns helpers
+on and off: the emitter shape, trajectory paths, facing axes, velocity arrows and more. *Views* saves camera
+positions with the effect.
+
+**Going back in time:** drag the time slider under the viewport, or use the Timeline panel, to scrub back up to
+30 seconds. Playing on from there continues from that moment.
+
+## Inspecting and debugging
+
+Click a particle to inspect it. The Debug panel then shows its age, position, colour and randoms, every value
+it worked out this frame, in order, and the emitter's variables. *Step evaluation* goes one calculation at a
+time, and *Next frame* moves one frame on. While a particle is inspected, Molang fields show its values next to
+each name.
+
+The **Timeline** panel shows how many particles were alive, when each emitter lived and every event it fired.
+The **Graph** panel plots a selected field over time.
+
+## Inputs and scenarios (Context)
+
+Effects often read values that come from outside, such as variables a script or an entity sets, or queries
+about the entity an effect is attached to. The Context panel lists them all. Give each a value, or drive it over time, and save named
+**scenarios** (for example "on fire" or "in water") to switch between them. Scenarios are stored in the file's
+`oxygen` block, which the game ignores.
+
+## Events
+
+Events run when something happens: an emitter starts or ends, a time on the timeline is reached, a particle
+hits something. An event can set variables, start another effect and play a sound.
+
+- **The graph** (left) shows what fires each event and what it spawns, across every effect involved. Drag the
+  background to pan, drag a card by its header to move it, and use *Tidy* to put the cards back. Ctrl+wheel
+  zooms. Click a card to edit it.
+- **The editor** (right) edits the selected event. Use *Add* to give it an expression, a spawned effect or a
+  sound.
+- **Steps** do several things in order. Each step is a small event of its own. Adding steps to an event that
+  already does something moves that into the first step.
+- **Random choice** picks one of several options by weight. Use it for variety, like a firework that bursts in
+  one of four colours.
+
+When an event starts another effect, it can hand values over: temps (`t.*`) set earlier in the event can be
+read by the new effect's *pre-effect* expression. The graph shows which values cross over and flags missing
+ones.
+
+## Curves
+
+Curves turn one number into another over a shape you draw: linear, smooth (Catmull-Rom), Bézier or a chain of
+Bézier keys. Read them in Molang as `v.curve_name`. Drag points to shape the curve. The input can be any Molang,
+such as a particle's age.
+
+## Textures and flipbooks
+
+The Texture panel shows the effect's texture with the area each particle uses outlined. Drag the area to move
+it, or its corner to resize. Pink outlines show where live particles are sampling. For animations, switch the
+billboard's texture to *Flipbook* in the Inspector and set the frame size, step and speed.
+
+## Vibrant Visuals and glow
+
+With the viewport on *Vibrant* or *Split*, the Vibrant Visuals panel previews Minecraft's newer lighting. To
+make a particle glow there, choose what glows: nothing, the whole particle, or just its bright parts. You see
+the result in the viewport straight away. *Save to pack* writes the texture set (and the glow map, for bright
+parts) next to the texture.
+
+## The scene
+
+The Scene panel sets up the world around the effect: the ground and its height, blocks to collide with (paint
+them, fill a box or import a `.mcstructure`), and a stand-in entity that walks a path, for effects attached to
+mobs. These settings are saved in the file's `oxygen` block.
+
+## Testing in Minecraft (desktop app)
+
+The desktop app can put your pack into Minecraft and start the effect in your world:
+
+1. In Minecraft, open a world and run `/connect localhost:19131` once.
+2. In Oxygen, open the Game menu and press *Deploy and spawn*. Oxygen copies the pack into Minecraft, reloads
+   it and starts the effect. *Spawn again* replays it.
+
+The Problems panel also shows what the game's content log said about the file.

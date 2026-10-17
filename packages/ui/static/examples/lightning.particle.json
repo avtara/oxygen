@@ -1,0 +1,58 @@
+{
+	"format_version": "1.10.0",
+	"particle_effect": {
+		"description": {
+			"identifier": "oxygen:lightning",
+			"basic_render_parameters": {
+				"material": "particles_add",
+				"texture": "textures/particle/particles"
+			}
+		},
+		"components": {
+			"minecraft:emitter_initialization": {
+				"creation_expression": "v.s1 = v.emitter_random_1 * 360; v.s2 = v.emitter_random_2 * 360; v.s3 = v.emitter_random_3 * 360; v.s4 = v.emitter_random_4 * 360; v.bend = v.emitter_random_2 * 360;",
+				"per_update_expression": "v.next = 0; v.next_render = 0;"
+			},
+			"minecraft:emitter_rate_instant": {
+				"num_particles": 97
+			},
+			"minecraft:emitter_lifetime_looping": {
+				"active_time": 0.1,
+				"sleep_time": 0.9
+			},
+			"minecraft:emitter_shape_point": {},
+			"minecraft:particle_lifetime_expression": {
+				"max_lifetime": 0.42
+			},
+			"minecraft:particle_initialization": {
+				"per_update_expression": "v.k = v.next; v.next = v.next + 1; v.branch = v.k >= 68 && v.k < 96; v.i = v.branch ? (v.k >= 82 ? v.k - 82 : v.k - 68) : (v.k >= 34 ? v.k - 34 : v.k); v.i = v.k == 96 ? 34 : v.i; v.j = v.branch ? 14 : v.i; v.x0 = math.sin(v.j * 97 + v.s4) * 0.09 + math.sin(v.j * 37 + v.s1) * 0.2 + math.sin(v.j * 9 + v.s2) * 0.32 + math.sin(v.j * 2.7 + v.s3) * 0.5; v.z0 = math.sin(v.j * 89 + v.s3) * 0.09 + math.sin(v.j * 31 + v.s4) * 0.2 + math.sin(v.j * 7.3 + v.s1) * 0.28 + math.sin(v.j * 3.3 + v.s2) * 0.45; v.y0 = 6.2 - v.j * 0.18; v.j = v.j + 1; v.x1 = math.sin(v.j * 97 + v.s4) * 0.09 + math.sin(v.j * 37 + v.s1) * 0.2 + math.sin(v.j * 9 + v.s2) * 0.32 + math.sin(v.j * 2.7 + v.s3) * 0.5; v.z1 = math.sin(v.j * 89 + v.s3) * 0.09 + math.sin(v.j * 31 + v.s4) * 0.2 + math.sin(v.j * 7.3 + v.s1) * 0.28 + math.sin(v.j * 3.3 + v.s2) * 0.45; v.y1 = 6.2 - v.j * 0.18; v.x0 = v.branch ? v.x0 + v.i * 0.15 * math.cos(v.bend) + math.sin(v.i * 41 + v.s3) * 0.1 : v.x0; v.z0 = v.branch ? v.z0 + v.i * 0.15 * math.sin(v.bend) + math.sin(v.i * 29 + v.s4) * 0.1 : v.z0; v.y0 = v.branch ? 6.2 - 14 * 0.18 - v.i * 0.13 : v.y0; v.x1 = v.branch ? v.x0 + 0.15 * math.cos(v.bend) + (math.sin((v.i + 1) * 41 + v.s3) - math.sin(v.i * 41 + v.s3)) * 0.1 : v.x1; v.z1 = v.branch ? v.z0 + 0.15 * math.sin(v.bend) + (math.sin((v.i + 1) * 29 + v.s4) - math.sin(v.i * 29 + v.s4)) * 0.1 : v.z1; v.y1 = v.branch ? v.y0 - 0.13 : v.y1; v.y0 = v.k == 96 ? 0.05 : v.y0; v.y1 = v.k == 96 ? 1.05 : v.y1;",
+				"per_render_expression": "v.r = v.next_render; v.next_render = v.next_render + 1; v.glow = (v.r >= 34 && v.r < 68) || (v.r >= 82 && v.r < 96); v.flash = v.r == 96; v.life = 1 - v.particle_age / v.particle_lifetime;"
+			},
+			"minecraft:particle_motion_parametric": {
+				"relative_position": ["(v.x0 + v.x1) / 2", "(v.y0 + v.y1) / 2", "(v.z0 + v.z1) / 2"],
+				"direction": ["v.x1 - v.x0", "v.y1 - v.y0", "v.z1 - v.z0"]
+			},
+			"minecraft:particle_appearance_billboard": {
+				"size": ["v.flash ? 1.6 : 0.2", "v.flash ? 1.9 : (v.glow ? 0.34 : 0.05)"],
+				"facing_camera_mode": "lookat_direction",
+				"uv": {
+					"texture_width": 128,
+					"texture_height": 128,
+					"uv": [32, 16],
+					"uv_size": [32, 32]
+				}
+			},
+			"minecraft:particle_appearance_tinting": {
+				"color": [
+					"v.flash ? 0.45 : (v.glow ? 0.35 : 0.88)",
+					"v.flash ? 0.62 : (v.glow ? 0.55 : 0.93)",
+					"1",
+					"v.life * v.life * math.random(0.55, 1) * (v.flash ? 0.8 : (v.glow ? 0.75 : 1))"
+				]
+			}
+		}
+	},
+	"oxygen": {
+		"cameras": [{ "name": "Storm", "position": [3.0, 2.4, 4.4], "target": [0.1, 3.0, 0] }]
+	}
+}

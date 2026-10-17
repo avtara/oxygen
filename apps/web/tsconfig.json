@@ -1,0 +1,9 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"types": ["vite/client", "svelte"],
+		"allowImportingTsExtensions": true
+	},
+	"include": ["src", "../../packages/ui/src", "../vscode/webview", "../desktop/renderer"]
+}

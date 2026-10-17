@@ -1,0 +1,20 @@
+{
+	"name": "@oxygen/format",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"description": "Lossless particle JSON documents: surgical edits, Molang value representation, component catalog, metadata block, validation",
+	"main": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit -p ."
+	},
+	"dependencies": {
+		"@oxygen/metadata": "workspace:*",
+		"ajv": "^8.20.0",
+		"jsonc-parser": "^3.3.1",
+		"molangjs": "workspace:*"
+	}
+}

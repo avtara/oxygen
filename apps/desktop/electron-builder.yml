@@ -1,0 +1,37 @@
+# Installer for the desktop app: pnpm --filter @oxygen/desktop package  →  apps/desktop/release/
+# main and preload are bundled with everything but Electron, so the app is dist/ and package.json alone.
+appId: dev.hydrogen.oxygen
+productName: Oxygen
+copyright: GPL-3.0-or-later. A fork of Snowstorm by JannisX11.
+directories:
+  output: release
+  buildResources: build
+files:
+  - package.json
+  - dist/**/*
+  - '!dist/**/*.map'
+extraFiles:
+  - from: ../../LICENSE
+    to: LICENSE.txt
+# use the Electron the workspace already has instead of downloading another
+electronDist: node_modules/electron/dist
+npmRebuild: false
+publish: null
+win:
+  target: nsis
+  icon: build/icon.png
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  license: ../../LICENSE
+mac:
+  target: dmg
+  icon: build/icon.png
+  category: public.app-category.developer-tools
+linux:
+  target: AppImage
+  # the package name (@oxygen/desktop) isn't a valid file name
+  executableName: oxygen
+  icon: build/icon.png
+  category: Development

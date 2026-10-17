@@ -1,0 +1,28 @@
+{
+	"name": "@oxygen/desktop",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Oxygen desktop app (Electron): native files, pack folders, file watching, game link",
+	"author": "Hydrogen (https://github.com/dev-hydrogen)",
+	"license": "GPL-3.0-or-later",
+	"homepage": "https://github.com/dev-hydrogen/oxygen#readme",
+	"main": "dist/main.cjs",
+	"scripts": {
+		"build": "node build.mjs",
+		"start": "node node_modules/electron/install.js && node build.mjs && electron .",
+		"typecheck": "tsc --noEmit -p .",
+		"package": "node node_modules/electron/install.js && node build.mjs && electron-builder --publish never"
+	},
+	"devDependencies": {
+		"@oxygen/effect": "workspace:*",
+		"@oxygen/gamelink": "workspace:*",
+		"@oxygen/ui": "workspace:*",
+		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"electron": "^44.8.0",
+		"electron-builder": "^26.15.3",
+		"esbuild": "^0.28.2",
+		"svelte": "^5.57.2",
+		"typescript": "6.0.3",
+		"vite": "^8.3.4"
+	}
+}

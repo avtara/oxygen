@@ -1,0 +1,17 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "vendor/molangjs"
+  - "vendor/wintersky"
+
+allowBuilds:
+  '@vscode/vsce-sign': true
+  electron: true
+  # Squirrel installer tooling electron-builder ships; the NSIS, dmg and AppImage builds don't use it
+  electron-winstaller: false
+  esbuild: true
+
+minimumReleaseAgeExclude:
+  - dockview-core@8.6.0
+  - svelte-check@4.7.7
+  - electron@44.8.0

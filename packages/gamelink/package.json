@@ -1,0 +1,21 @@
+{
+	"name": "@oxygen/gamelink",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"description": "Link Oxygen to Minecraft Bedrock: deploy packs to the development folders, /connect commands, content log import (Node only)",
+	"main": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./contentlog": "./src/contentlog.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit -p ."
+	},
+	"dependencies": {
+		"ws": "^8.22.0"
+	},
+	"devDependencies": {
+		"@types/ws": "^8.18.2"
+	}
+}

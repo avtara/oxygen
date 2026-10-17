@@ -1,0 +1,21 @@
+{
+	"name": "@oxygen/effect",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"description": "Effect-wide analysis: fields in evaluation order, variable data flow, faithful diagnostics",
+	"main": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit -p ."
+	},
+	"dependencies": {
+		"@oxygen/format": "workspace:*",
+		"@oxygen/lang": "workspace:*",
+		"@oxygen/metadata": "workspace:*",
+		"molangjs": "workspace:*",
+		"wintersky": "workspace:*"
+	}
+}

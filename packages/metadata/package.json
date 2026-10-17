@@ -1,0 +1,17 @@
+{
+	"name": "@oxygen/metadata",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"description": "Molang/particle metadata derived from Mojang/bedrock-samples (fetched at build time, not vendored)",
+	"main": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./generated/*": "./generated/*"
+	},
+	"scripts": {
+		"fetch": "node scripts/fetch.mjs",
+		"prepare": "node scripts/fetch.mjs --if-missing",
+		"typecheck": "tsc --noEmit -p ."
+	}
+}

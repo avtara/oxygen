@@ -1,0 +1,9 @@
+**
+!dist/extension.js
+!dist/webview/**
+!dist/vanilla/**
+!dist/examples/**
+!package.json
+!README.md
+!LICENSE
+!media/icon.png

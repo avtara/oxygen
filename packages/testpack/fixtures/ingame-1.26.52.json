@@ -1,0 +1,754 @@
+{
+	"game": "1.26.52 (Windows, GDK)",
+	"date": "2026-10-17",
+	"method": "BedrockMCP screenshots of the generated test pack (Oxygen Test Lab world)",
+	"loadLog": [
+		"Molang syntax errors are reported at load: '... | Error: binary Add '+' operator at end of expression' (incl. unused events and curves)",
+		"Unknown math function: 'Error: unknown token: math.x(1)' + 'unrecognized token'",
+		"Double-quoted string: 'unrecognized token: \"a\";'",
+		"Unknown/unsupported query: 'Failed to resolve query query.x.  Either the query does not exist or it is not supported in this context.' + 'unrecognized token'",
+		"Unknown component: '[Effects][error] ... Unrecognized component name 'oxygen:meta' in particle effect'",
+		"Unset variable read at runtime: 'Error: unhandled request for unknown variable 'variable.x''"
+	],
+	"results": {
+		"t01": {
+			"p1": true,
+			"p2": true,
+			"p3": false,
+			"p4": false,
+			"p5": false,
+			"p6": false,
+			"p7": true,
+			"conclusion": "Reading an unset variable aborts the whole expression (later statements do not run, value 0.0). ?? catches unset names even inside a complex left side. The effect keeps running."
+		},
+		"t02": {
+			"p1": true,
+			"p2": false,
+			"p3": "one particle",
+			"p4": false,
+			"p5": "burst visible",
+			"conclusion": "active_time is evaluated before creation_expression. Steady emitters with active_time 0 spawn nothing. Instant bursts fire even with active_time 0. A zero-length looping emitter does not restart every frame."
+		},
+		"t03": {
+			"p1": true,
+			"p2": "visible, width ~1.0",
+			"p3": "visible white",
+			"p4": true,
+			"p5": true,
+			"p6": "visible white",
+			"p7": true,
+			"p8": true,
+			"p9": "visible, width ~1.0",
+			"conclusion": "Molang errors do NOT fail the effect: the broken field falls back (apparently to 1.0). Unknown queries are load-time errors with the same fallback."
+		},
+		"t04": {
+			"p1": false,
+			"p2": false,
+			"p3": false,
+			"conclusion": "No particle reached update index 9998 even with 9999 spawned — re-test with a counter calibration (t29)."
+		},
+		"t05": {
+			"p1": true,
+			"p2": true,
+			"p3": true,
+			"p4": true,
+			"p5": true,
+			"p6": true,
+			"p7": true,
+			"conclusion": "t.* is never cleared between executions: persists across frames and is shared between emitter and particle expressions and update/render passes."
+		},
+		"t06": {
+			"p1": "back quad visible through cutout holes",
+			"p2": "blended overlap",
+			"p3": "upper half of alpha bands",
+			"p4": "same as p3",
+			"p5": "culled from front, visible from behind",
+			"p6": "culled",
+			"p7": "visible",
+			"p8": "additive overlap",
+			"conclusion": "Cutout discards (alpha test ~0.5 on TEXTURE alpha only — tint alpha ignored); blend/add don't occlude; particles are one-sided; emitter_transform_xy faces +Z."
+		},
+		"t07": {
+			"p1": true,
+			"p2": true,
+			"p3": false,
+			"p4": false,
+			"conclusion": "Lifetime component without max_lifetime → lives on; no lifetime component → dies immediately; max_lifetime 0 → dies."
+		},
+		"t08": {
+			"p1": "1 particle",
+			"p2": "1 particle",
+			"p3": "1 particle",
+			"conclusion": "Looping + instant (active 0.5, sleep 0) produced a single particle over ~7 loops — investigate loop/burst behaviour (t31)."
+		},
+		"t10": {
+			"p1": true,
+			"p2": false,
+			"p3": false,
+			"p4": false,
+			"p5": false,
+			"p6": false,
+			"conclusion": "Any negative axis hides the particle (#119)."
+		},
+		"t11": {
+			"p1": "R|G|B|Y",
+			"p2": "solid green sliver",
+			"p3": "green",
+			"p4": "green|red (flipped)",
+			"conclusion": "Zero uv_size samples a sliver (#118); negative flips."
+		},
+		"t12": {
+			"p1": true,
+			"p2": true,
+			"p3": true,
+			"p4": true,
+			"p5": true,
+			"p6": true,
+			"conclusion": "Extra keys are ignored everywhere; only an unknown component logs an error. Top-level 'oxygen' is silent."
+		},
+		"t13": {
+			"p1": true,
+			"p2": true,
+			"p3": true,
+			"conclusion": "Newlines inside Molang strings parse."
+		},
+		"t14": {
+			"p1": "invisible from front (faces +Z)",
+			"p2": "flat, faces up (+Y)",
+			"p3": "F upright facing camera",
+			"p4": "flat (edge-on)",
+			"p5": "flat (edge-on)",
+			"p6": "visible",
+			"p7": "invisible",
+			"p8": "edge-on",
+			"conclusion": "direction_y with dir +X lies flat facing +Y (skill table predicts a vertical quad) — full axis matrix in t34."
+		},
+		"t16": {
+			"p1": false,
+			"p2": true,
+			"p3": true,
+			"p4": true,
+			"conclusion": "Crossing test confirmed; the first update has no previous position (spawn→first position jump does not count)."
+		},
+		"t17": {
+			"p1": "rests on stone",
+			"p2": "sinks through water",
+			"p3": "rests on leaves",
+			"p4": "rests on slab top (0.5)",
+			"p5": "rests on glass",
+			"p6": "falls through short grass",
+			"p7": "rests on fence top (~1.5)",
+			"conclusion": "Collision uses each block's real collision box."
+		},
+		"t19": {
+			"p1": true,
+			"p2": false,
+			"p3": true,
+			"p4": true,
+			"p5": false,
+			"p6": true,
+			"p7": false,
+			"p8": true,
+			"p9": true,
+			"p10": true,
+			"conclusion": "All match Oxygen except math.sign(0) == -1 (false in-game, despite the docs) — see t32."
+		},
+		"t20": {
+			"p1": "white",
+			"p2": "white",
+			"p3": "cyan",
+			"p4": "grey",
+			"conclusion": "Tint clamps to 0–1 (packed)."
+		},
+		"t21": {
+			"p1": true,
+			"p2": "large (0.3)",
+			"p3": "small (0.05)",
+			"conclusion": "Script API variables are applied before creation_expression."
+		},
+		"t24": {
+			"p1": "near (blue) on top",
+			"p2": "near (red) on top",
+			"conclusion": "Blended particles are depth-sorted back-to-front for drawing; render-prep traversal stays in spawn order."
+		},
+		"t26": {
+			"p1": false,
+			"p2": false,
+			"p3": false,
+			"p4": false,
+			"p5": true,
+			"p6": true,
+			"conclusion": "Per-expression version 4/5 still use the old ternary/logic rules; 12 and plain strings use new rules. Find thresholds (t33)."
+		},
+		"t27": {
+			"p1": "≈ one block",
+			"conclusion": "Billboard size is a half-extent."
+		},
+		"t28": {
+			"p1": "width 1.0",
+			"p2": "control 1.0",
+			"p3": "height 1.0",
+			"p4": "red (R=1)",
+			"p5": "not shifted (0)",
+			"p6": "width 1.0",
+			"p7": false,
+			"p8": false,
+			"conclusion": "A field whose Molang fails to parse (incl. unknown queries) is dropped entirely and the field uses its DEFAULT value (billboard size 1, tint 1, position 0). Valid statements in the same expression do not run."
+		},
+		"t29": {
+			"p1": true,
+			"p2": true,
+			"p3": false,
+			"p4": true,
+			"p5": false,
+			"p6": false,
+			"p7": false,
+			"p8": false,
+			"p9": false,
+			"conclusion": "Counter technique works; capacity between 1000 and 5000 (refined by t42/t41/t43)."
+		},
+		"t30": {
+			"p1": "writer",
+			"p2": true,
+			"p3": true,
+			"conclusion": "Temps are global: shared between different emitters, persistent across frames, readable in events."
+		},
+		"t31": {
+			"p1": "1 dot",
+			"p2": "1 dot",
+			"p3": "1 dot",
+			"p4": "1 dot",
+			"p5": "1 dot",
+			"conclusion": "/particle-spawned looping emitters never start a second loop."
+		},
+		"t32": {
+			"p1": false,
+			"p2": true,
+			"p3": false,
+			"p4": true,
+			"p5": true,
+			"p6": true,
+			"p7": true,
+			"p8": false,
+			"conclusion": "math.sign(0) == 1 (x >= 0 → 1). clamp(min > max) → max. mod(x, 0) is not 0 (NaN)."
+		},
+		"t33": {
+			"all": true,
+			"conclusion": "Per-expression versions 6–11 use right-assoc ternary and && before ||; with t26: versions 3–5 use the old rules → threshold is 6 for both."
+		},
+		"t34": {
+			"conclusion": "direction_x: horizontal directions follow the skill (X=d, Y=up, normal=X×Y). Vertical d: normal -Z, X=d. Zero: invisible."
+		},
+		"t35": {
+			"conclusion": "direction_y: horizontal d → quad lies flat facing +Y (Y=d). Vertical d → faces +Z (Y=d; -Y upside down). Zero: invisible."
+		},
+		"t36": {
+			"conclusion": "direction_z: horizontal d → normal = d, Y up (skill). Vertical d → normal = -d with Y=+Z (d=-Y faces up, X=-X). Zero: invisible."
+		},
+		"t37": {
+			"conclusion": "lookat_direction rotates about d toward the camera; edge-on when d is along the view axis. Glyph roll needs a render comparison."
+		},
+		"t38": {
+			"p1": "1 dot",
+			"p2": "1 dot",
+			"p3": "1 dot",
+			"conclusion": "Script API spawns don't loop either — standalone emitters play a single loop."
+		},
+		"t40": {
+			"conclusion": "A 30k burst in an empty world produced 1000–1999 particles."
+		},
+		"t41": {
+			"conclusion": "Steady 100000/s with max_particles 20000 accumulates only 1000 live particles."
+		},
+		"t42": {
+			"conclusion": "An instant burst holds exactly 1000 particles (idx 999 exists, 1000 does not)."
+		},
+		"t43": {
+			"conclusion": "Two 1500-bursts → total ≈ 2000: the 1000 cap is per emitter, not global (command/script spawn context, 1.26.52)."
+		},
+		"t44": {
+			"p1": true,
+			"p2": true,
+			"p3": true,
+			"p4": true,
+			"p5": true,
+			"p6": true,
+			"p7": true,
+			"p8": false,
+			"conclusion": "Linear curves clamp at both ends; Molang nodes are evaluated (#110); catmull_rom uses the inner nodes, bezier is cubic, bezier_chain is Hermite and holds past its last key (#123). Curves are not yet set when creation_expression runs."
+		},
+		"t45": {
+			"p1": true,
+			"p2": true,
+			"p3": true,
+			"p4": true,
+			"conclusion": "Molang computes in 32-bit floats: 0.1 + 0.2 == 0.3, 0.1 * 3 == 0.3 and 16777216 + 1 == 16777216 are all true."
+		},
+		"t46": {
+			"p1": true,
+			"p2": true,
+			"p3": true,
+			"p4": true,
+			"p5": true,
+			"conclusion": "frame = floor(age * fps); without loop it holds frame max_frame - 1 (max_frame is a count); with loop it wraps; stretch_to_lifetime spreads max_frame frames over the lifetime. Read at about 2.2 s; half a second later p1 and p2 moved on to frames 3 and 1 as predicted."
+		},
+		"t47": {
+			"p1": true,
+			"p2": true,
+			"p3": false,
+			"p4": true,
+			"conclusion": "Turning away for 3 s (scripted teleports) culls the emitters: per_render stops while they are out of view (its longest gap between runs exceeds 1.5 s), while particles keep ageing and the emitter's per_update keeps running every frame. Culling skips render preparation only."
+		},
+		"t48": {
+			"p1": false,
+			"p2": false,
+			"p3": true,
+			"p4": false,
+			"p5": false,
+			"p6": false,
+			"p7": false,
+			"p8": false,
+			"conclusion": "Sequence steps run in order (p3). A plain node spawns before its expression (p1 hidden), and a node with a sequence ignores its own expression and spawn (p2). p4–p8 spawn from particle creation events, whose children appear at the world origin (t53), so they say nothing about weights; t50/t51 measure those. p5's negative weight was also rejected at load: 'Weight field must be zero or greater. Ignoring random option'."
+		},
+		"t49": {
+			"q1": true,
+			"q2": true,
+			"q3": true,
+			"q4": false,
+			"q5": true,
+			"q6": false,
+			"conclusion": "A node with an expression and a particle_effect runs both, the spawn first (its pre-effect sees the temp from before the expression). Children of particle creation events don't appear at the particle (q4, q6); randomize spawns from emitter events (q5)."
+		},
+		"t50": {
+			"r1": false,
+			"r2": false,
+			"r3": false,
+			"r4": true,
+			"r5": true,
+			"r6": true,
+			"r7": false,
+			"r8": false,
+			"r9": true,
+			"r10": true,
+			"r11": false,
+			"conclusion": "A node with a sequence or randomize doesn't spawn its own particle_effect (r1–r3). Particle creation events run expressions (r4); expiration and timeline events spawn at the particle (r5, r6). Weight 0 is never picked next to a positive weight (r8), a lone 0-weight option still is (r9), and weights are proportional (r11)."
+		},
+		"t51": {
+			"s1": false,
+			"s2": false,
+			"s3": false,
+			"s4": false,
+			"s5": true,
+			"s6": true,
+			"s7": true,
+			"s8": false,
+			"conclusion": "A node with a sequence or a randomize ignores its own expression and particle_effect; with both, both run. When every weight is 0 the first option is always picked (s7 yes, s8 never)."
+		},
+		"t52": {
+			"u0": true,
+			"u1": false,
+			"u2": true,
+			"u3": false,
+			"u4": false,
+			"u5": true,
+			"conclusion": "The child of a particle creation event is created (u0 saw the temp its creation_expression sets), just not at the particle. In a node with both, the sequence runs before the randomize whatever the key order (u2–u4). A plain node spawns before its expression whatever the key order (u5)."
+		},
+		"t53": {
+			"v1": false,
+			"conclusion": "The child of a particle creation event appears at the world origin (seen from tp 4 1 4 facing 0 0 0), not at the particle."
+		},
+		"t54": {
+			"w1": true,
+			"w3": true,
+			"w2": true,
+			"conclusion": "An emitter_bound child keeps spawning after its parent stops (w1) and after the parent is gone entirely (w3): binding doesn't end it with the parent."
+		},
+		"t55": {
+			"x1": false,
+			"x2": false,
+			"x3": false,
+			"x4": true,
+			"conclusion": "Single-particle children ('particle', 'particle_with_velocity') from an expiration event don't appear at the particle, even without a kill plane (x3); an emitter child does (x4). Velocity inheritance can't be read from these probes."
+		},
+		"t56": {
+			"y0": true,
+			"y1": false,
+			"conclusion": "The 'particle' child exists (y0 saw the temp its particle sets) and appears at the world origin (seen from tp 4 1 4 facing 0 0 0)."
+		},
+		"t57": {
+			"z1": false,
+			"z2": true,
+			"conclusion": "A 'particle' spawn from an emitter creation event doesn't appear at the emitter either; an 'emitter' spawn does. Single-particle spawns go to the world origin whatever fires them."
+		},
+		"t58": {
+			"a1": false,
+			"a2": false,
+			"conclusion": "Neither appears at its probe. a2's creation-event child lands at (3, 0, 0): the particle's offset from its emitter, taken as a world position. a1's single-particle child lands at the origin, not at (0, 3, 0): single-particle spawns ignore where the particle is."
+		},
+		"t59": {
+			"c1": false,
+			"conclusion": "Superseded: built on q.camera_rotation following the camera, which it doesn't in /particle effects (t60, t61). See t64 for lag."
+		},
+		"t60": {
+			"b0": false,
+			"b1": false,
+			"b2": false,
+			"b3": false,
+			"b4": true,
+			"b5": false,
+			"b6": false,
+			"b7": false,
+			"b8": false,
+			"rad": false,
+			"conclusion": "q.camera_rotation(1) reads in [-20, 20) facing south, west and north alike, and not a radian-sized value: it reads 0 (t63) whatever the camera yaw."
+		},
+		"t61": {
+			"b0": false,
+			"b1": false,
+			"b2": false,
+			"b3": false,
+			"b4": true,
+			"b5": false,
+			"b6": false,
+			"b7": false,
+			"b8": false,
+			"rad": false,
+			"conclusion": "q.camera_rotation(0) reads 0 looking level or 50 degrees down."
+		},
+		"t62": {
+			"d0": false,
+			"d1": true,
+			"l0": false,
+			"l1": true,
+			"r0": false,
+			"r1": false,
+			"r2": true,
+			"r3": false,
+			"conclusion": "q.distance_from_camera and q.camera_distance_range_lerp follow the camera; q.rotation_to_camera(1) reads about -90 from the west, east and south alike."
+		},
+		"t63": {
+			"y0": true,
+			"y1": true,
+			"p0": true,
+			"p1": true,
+			"p2": false,
+			"p3": false,
+			"c0": true,
+			"conclusion": "Exactly: q.rotation_to_camera(1) == -90, q.rotation_to_camera(0) == 0, q.camera_rotation(0) == q.camera_rotation(1) == 0 in a /particle effect."
+		},
+		"t64": {
+			"m1": true,
+			"conclusion": "No lag: with a free camera easing along the axis at 4.5 blocks/s the probe kept its 2-block distance within pixel error (144 px still; 146 moving in, 142 moving out = 1.98 / 2.03 blocks, under 5 ms, less than a frame). A one-tick lag would have shown about 0.23 blocks (about 165 / 128 px). q.distance_from_camera uses the free camera's position."
+		},
+		"t65": {
+			"classic": {
+				"v1": [
+					128,
+					128,
+					128
+				],
+				"v2": [
+					126,
+					126,
+					126
+				],
+				"v3": [
+					128,
+					128,
+					128
+				],
+				"v4": [
+					255,
+					255,
+					255
+				],
+				"v5": [
+					128,
+					128,
+					128
+				],
+				"v6": [
+					126,
+					126,
+					126
+				],
+				"v7": [
+					255,
+					255,
+					255
+				],
+				"v8": [
+					64,
+					64,
+					64
+				],
+				"sky": [
+					170,
+					209,
+					254
+				]
+			},
+			"vv": {
+				"v1": [
+					120,
+					137,
+					174
+				],
+				"v2": [
+					122,
+					137,
+					172
+				],
+				"v3": [
+					124,
+					140,
+					176
+				],
+				"v4": [
+					185,
+					198,
+					234
+				],
+				"v5": [
+					233,
+					228,
+					238
+				],
+				"v6": [
+					232,
+					228,
+					238
+				],
+				"v7": [
+					153,
+					175,
+					224
+				],
+				"v8": [
+					82,
+					93,
+					116
+				],
+				"sky": [
+					175,
+					187,
+					225
+				]
+			},
+			"vvFar": {
+				"v1": [
+					121,
+					137,
+					172
+				],
+				"v7": [
+					153,
+					174,
+					224
+				],
+				"v8": [
+					92,
+					101,
+					123
+				],
+				"v5": [
+					234,
+					228,
+					237
+				]
+			},
+			"conclusion": "Noon, vanilla lighting, VV 'Performance' preset, probes facing a camera that looks south. Classic is almost identity (lit 0.984). Vibrant Visuals: lit and unlit particles look the same (both lit, mostly by the blue sky since billboards face away from the overhead sun); strong highlight compression (grey 64/128/255 → R 82/120/153); an emissive texture set makes particles glow near white; additive grey adds only ~+10 over the sky. Distance haze is small at 14 blocks. VV needs the resource pack's manifest to declare capabilities ['pbr'], otherwise the mode is greyed out. 'vv' values at 3 blocks (v2-v4, v6 from 14 blocks); 'vvFar' at 14 blocks.",
+			"vvByTime": {
+				"0.5": {
+					"v1": [
+						122,
+						138,
+						175
+					],
+					"v2": [
+						123,
+						138,
+						175
+					],
+					"v3": [
+						125,
+						142,
+						178
+					],
+					"v4": [
+						187,
+						204,
+						238
+					],
+					"v5": [
+						232,
+						226,
+						238
+					],
+					"v6": [
+						232,
+						227,
+						238
+					],
+					"v7": [
+						153,
+						174,
+						223
+					],
+					"v8": [
+						94,
+						103,
+						124
+					],
+					"sky": [
+						174,
+						187,
+						224
+					]
+				},
+				"0.75": {
+					"v1": [
+						75,
+						81,
+						102
+					],
+					"v2": [
+						74,
+						81,
+						101
+					],
+					"v3": [
+						77,
+						84,
+						103
+					],
+					"v4": [
+						171,
+						163,
+						184
+					],
+					"v5": [
+						229,
+						222,
+						228
+					],
+					"v6": [
+						230,
+						222,
+						227
+					],
+					"v7": [
+						154,
+						152,
+						177
+					],
+					"v8": [
+						65,
+						60,
+						66
+					],
+					"sky": [
+						134,
+						119,
+						135
+					]
+				},
+				"0": {
+					"v1": [
+						38,
+						44,
+						55
+					],
+					"v2": [
+						38,
+						44,
+						55
+					],
+					"v3": [
+						41,
+						46,
+						58
+					],
+					"v4": [
+						74,
+						82,
+						99
+					],
+					"v5": [
+						253,
+						249,
+						252
+					],
+					"v6": [
+						253,
+						249,
+						252
+					],
+					"v7": [
+						75,
+						83,
+						102
+					],
+					"v8": [
+						26,
+						28,
+						33
+					],
+					"sky": [
+						45,
+						44,
+						46
+					]
+				},
+				"0.25": {
+					"v1": [
+						63,
+						71,
+						90
+					],
+					"v2": [
+						63,
+						71,
+						91
+					],
+					"v3": [
+						65,
+						73,
+						92
+					],
+					"v4": [
+						124,
+						132,
+						166
+					],
+					"v5": [
+						242,
+						235,
+						240
+					],
+					"v6": [
+						242,
+						235,
+						239
+					],
+					"v7": [
+						110,
+						126,
+						159
+					],
+					"v8": [
+						40,
+						43,
+						54
+					],
+					"sky": [
+						66,
+						74,
+						95
+					]
+				}
+			},
+			"vvByTimeNote": "Keys are query.time_of_day (midnight 0, sunrise 0.25, noon 0.5, sunset 0.75); the row seen from 14 blocks after exposure settled (about 8 s)."
+		}
+	}
+}

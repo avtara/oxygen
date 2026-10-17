@@ -1,0 +1,120 @@
+# Building and development
+
+## Setup
+
+You need Node.js 22 or newer, pnpm (run `corepack enable` once) and Git.
+
+```sh
+git clone --recurse-submodules https://github.com/dev-hydrogen/oxygen.git
+cd oxygen
+pnpm install
+```
+
+`pnpm install` also downloads Mojang's query and schema data (from Mojang's `bedrock-samples`) into
+`packages/metadata`. If GitHub rate-limits the download, set a `GITHUB_TOKEN` environment variable and run
+`pnpm metadata`.
+
+The particle engine and the Molang compiler are Git submodules in `vendor/`. If you cloned without
+`--recurse-submodules`, run `git submodule update --init`.
+
+## Running and building
+
+| Task | Command | Result |
+| --- | --- | --- |
+| Web app with live reload | `pnpm dev` | http://localhost:5178 |
+| Web app for hosting | `pnpm --filter @oxygen/web build` | `apps/web/dist/`, a static site that runs from any folder |
+| Desktop app, from source | `pnpm desktop` | the app in a window |
+| Desktop installer | `pnpm package:desktop` | `apps/desktop/release/` (Windows installer; dmg and AppImage are set up) |
+| VS Code extension | `pnpm package:vscode` | `apps/vscode/oxygen-particle-editor-<version>.vsix` |
+
+To try a `.vsix`, install it in VS Code with *Extensions: Install from VSIX…*, or run
+`code --install-extension apps/vscode/oxygen-particle-editor-<version>.vsix`.
+
+## Tests
+
+| Command | What it checks |
+| --- | --- |
+| `pnpm test` | Unit tests, the engine against in-game results, the Molang compiler |
+| `pnpm typecheck` | Types in every package |
+| `pnpm test:vscode` | The extension inside a real VS Code |
+| `pnpm test:webview-sync` | VS Code's text editor and Oxygen's editor staying in sync |
+| `pnpm test:desktop` | The desktop app end to end |
+| `pnpm test:soak` | Five minutes of switching files and editing (`-- --minutes 30` for longer) |
+
+The VS Code and desktop tests can also run against packaged builds:
+`node apps/vscode/test/run.mjs --extension <unpacked folder>` and
+`node tools/desktop-test.mjs --packaged <path to Oxygen.exe>`.
+
+## Repository layout
+
+| Path | What's there |
+| --- | --- |
+| `apps/web`, `apps/vscode`, `apps/desktop` | The three apps |
+| `packages/ui` | The editor itself: panels, fields and the viewport (Svelte 5) |
+| `packages/format` | Reading and editing particle JSON without disturbing its formatting |
+| `packages/lang` | The Molang editor: completion, problems, fixes and refactors |
+| `packages/effect` | Whole-effect analysis: run order, data flow, problems, which effect spawns which |
+| `packages/scene` | The world around the effect: blocks, structures, the stand-in entity, Vibrant Visuals |
+| `packages/gamelink` | Talking to Minecraft: deploying packs, `/connect`, the content log |
+| `packages/metadata` | Mojang's query and schema data, downloaded at install |
+| `packages/testpack` | The in-game test pack and its recorded results |
+| `vendor/wintersky` | The particle engine and renderer |
+| `vendor/molangjs` | The Molang compiler |
+| `tools/` | Test drivers, the in-game runners, and the logo and icon renderers |
+
+## Checking behaviour in Minecraft
+
+Oxygen's engine is checked against the game with a test pack of small effects, each answering one question.
+
+**1. Install the pack** (with Minecraft closed, since it only notices new development packs when it starts):
+
+```sh
+pnpm --filter @oxygen/testpack run deploy
+```
+
+This builds the packs, copies them into Minecraft's development pack folders and creates a flat world called
+**Oxygen Test Lab** with both turned on. Use `run`, because `pnpm deploy` on its own is a different pnpm command.
+
+**2. Run tests** in that world, from chat:
+
+```
+/function oxygen/setup        (once: noon, clear weather, spectator mode)
+/function oxygen/t01_cam      (go to the test's station)
+/function oxygen/t01          (run the test)
+```
+
+`packages/testpack/out/CHECKLIST.md` says what each test asks, how long to wait and what each probe (marked by
+coloured wool, left to right) means.
+
+**3. Recorded results** live in `packages/testpack/fixtures/`, and `pnpm test` replays them against the engine.
+When a result changes in a new game version, update the fixture.
+
+The bundled examples can be checked in the same world: `node tools/examples-ingame.mjs` copies them in, and
+`node tools/examples-ingame.mjs --run` plays each one from its saved camera and screenshots it.
+
+The runners that screenshot automatically (`tools/run-ingame-tests.mjs` and `--run` above) need an in-game
+automation server for screenshots and input (`tools/bedrock-mcp.mjs` is its client). Commands go through
+`tools/game-bridge.ts` over `/connect` when it's running.
+
+## Continuous integration and releases
+
+`.github/workflows/ci.yml` runs the tests, type checks and builds on every push to `main` and on pull requests.
+
+`.github/workflows/release.yml` makes a release from a version tag:
+
+1. Set the same `version` in `apps/vscode/package.json` and `apps/desktop/package.json`, and add a section for
+   it at the top of `CHANGELOG.md`.
+2. Tag and push: `git tag v0.1.0 && git push origin v0.1.0`.
+3. The workflow builds the desktop app on Windows, macOS and Linux and the VS Code extension, then creates a
+   draft release with the newest changelog section as its notes. Check the draft on the Releases page and
+   publish it.
+
+If the repository has `VSCE_PAT` and `OVSX_PAT` secrets, the same tag also publishes the extension to the
+Visual Studio Marketplace and Open VSX.
+
+## Other tools
+
+- `tools/logo.mjs` and `tools/icons.mjs` render the logos and the app icons.
+- `tools/ui-shot.mjs` screenshots the web app after scripted steps, and `tools/png-sample.mjs` reads colours out
+  of screenshots.
+- `tools/vv-calibrate.mjs` and `tools/vv-fit.py` fit the Vibrant Visuals preview to in-game measurements.

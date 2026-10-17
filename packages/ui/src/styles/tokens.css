@@ -1,0 +1,131 @@
+/* Oxygen design tokens: the colours, type and spacing every component uses */
+@import '@fontsource-variable/recursive/full.css';
+
+:root,
+.ox-root {
+	/* core palette */
+	--ox-night: #1a1e2c;
+	--ox-dusk: #242a3b;
+	--ox-frost: #dfe5f0;
+	--ox-haze: #8e97ad;
+	--ox-lox: #93bdf5;
+
+	/* derived surfaces */
+	--ox-bg: var(--ox-night);
+	--ox-panel: #1f2433;
+	--ox-raised: var(--ox-dusk);
+	--ox-input: #171b28;
+	--ox-input-hover: #1c2131;
+	--ox-float: #2a3145;
+	--ox-rule: #2b3244;
+	--ox-rule-strong: #3a4258;
+	--ox-selection: rgba(147, 189, 245, 0.22);
+	--ox-hover: rgba(223, 229, 240, 0.05);
+	--ox-active: rgba(223, 229, 240, 0.09);
+	--ox-text-dim: #6b7389;
+	--ox-float-shadow: 0 10px 30px rgba(6, 8, 14, 0.45), 0 2px 6px rgba(6, 8, 14, 0.35);
+	--ox-focus: 0 0 0 2px var(--ox-lox);
+	--ox-bracket-match: rgba(147, 189, 245, 0.18);
+
+	/* phases: the one loud element */
+	--ox-phase-setup: #b49dff;
+	--ox-phase-emitter: #3fc4b2;
+	--ox-phase-particle: #a3d46c;
+	--ox-phase-render: #ec92d6;
+	--ox-phase-event: var(--ox-haze);
+
+	/* diagnostics */
+	--ox-error: #ff7470;
+	--ox-warning: #f2c14e;
+	--ox-info: var(--ox-haze);
+
+	/* syntax (quieter than phases) */
+	--ox-code-fg: #d5dceb;
+	--ox-syn-variable: #9ccaf5;
+	--ox-syn-temp: #c9aef5;
+	--ox-syn-context: #e6aecb;
+	--ox-syn-query: #74cdbf;
+	--ox-syn-math: #a9cf8a;
+	--ox-syn-number: #eebd96;
+	--ox-syn-string: #e3d39a;
+	--ox-syn-keyword: #f0a3b4;
+	--ox-syn-comment: #707a92;
+	--ox-syn-bracket-0: #dfe5f0;
+	--ox-syn-bracket-1: #eebd96;
+	--ox-syn-bracket-2: #9ccaf5;
+
+	/* type */
+	--ox-font-ui: 'Recursive Variable', system-ui, sans-serif;
+	--ox-font-code: 'Recursive Variable', ui-monospace, monospace;
+	--ox-ui-size: 12.5px;
+	--ox-ui-line: 18px;
+	--ox-code-size: 13px;
+	--ox-code-line: 20px;
+	--ox-title-size: 12.5px;
+
+	/* rhythm */
+	--ox-row: 24px;
+	--ox-gap: 8px;
+	--ox-radius: 3px;
+	--ox-radius-float: 6px;
+	--ox-phase-bar: 2px;
+
+	/* non-faithful hatch */
+	--ox-hatch: repeating-linear-gradient(-45deg, rgba(147, 189, 245, 0.18) 0 4px, transparent 4px 8px);
+
+	color-scheme: dark;
+}
+
+/* Recursive's two voices */
+.ox-root,
+.ox-ui {
+	font-family: var(--ox-font-ui);
+	font-variation-settings: 'MONO' 0, 'CASL' 0;
+	font-feature-settings: 'tnum' 0;
+}
+.ox-code,
+.cm-editor .cm-content,
+.cm-tooltip-autocomplete > ul {
+	font-family: var(--ox-font-code);
+	font-variation-settings: 'MONO' 1, 'CASL' 0;
+	font-feature-settings: 'liga' 0;
+}
+.ox-num {
+	font-feature-settings: 'tnum' 1;
+}
+
+/* dockview mapped onto Oxygen tokens */
+.ox-dock {
+	--dv-paneview-active-outline-color: var(--ox-lox);
+	--dv-tabs-and-actions-container-font-size: var(--ox-ui-size);
+	--dv-tabs-and-actions-container-height: 28px;
+	--dv-drag-over-background-color: rgba(147, 189, 245, 0.12);
+	--dv-drag-over-border-color: var(--ox-lox);
+	--dv-tabs-container-scrollbar-color: var(--ox-rule-strong);
+	--dv-icon-hover-background-color: var(--ox-hover);
+	--dv-floating-box-shadow: var(--ox-float-shadow);
+	--dv-group-view-background-color: var(--ox-panel);
+	--dv-tabs-and-actions-container-background-color: var(--ox-bg);
+	--dv-activegroup-visiblepanel-tab-background-color: var(--ox-panel);
+	--dv-activegroup-hiddenpanel-tab-background-color: var(--ox-bg);
+	--dv-inactivegroup-visiblepanel-tab-background-color: var(--ox-panel);
+	--dv-inactivegroup-hiddenpanel-tab-background-color: var(--ox-bg);
+	--dv-tab-divider-color: transparent;
+	--dv-activegroup-visiblepanel-tab-color: var(--ox-frost);
+	--dv-activegroup-hiddenpanel-tab-color: var(--ox-haze);
+	--dv-inactivegroup-visiblepanel-tab-color: var(--ox-haze);
+	--dv-inactivegroup-hiddenpanel-tab-color: var(--ox-text-dim);
+	--dv-separator-border: var(--ox-rule);
+	--dv-paneview-header-border-color: var(--ox-rule);
+	--dv-sash-color: transparent;
+	--dv-active-sash-color: var(--ox-lox);
+	--dv-active-sash-transition-duration: 0.1s;
+	--dv-active-sash-transition-delay: 0.25s;
+	--dv-border-radius: 0px;
+	--dv-tab-margin: 0;
+	--dv-spacing-padding: 0px;
+	--dv-tab-border-radius: 0px;
+	--dv-floating-border: 1px solid var(--ox-rule-strong);
+	--dv-floating-titlebar-height: 22px;
+	--dv-overlay-z-index: 50;
+}

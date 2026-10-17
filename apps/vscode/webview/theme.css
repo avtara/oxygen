@@ -1,0 +1,56 @@
+/* the page behind the app, in the editor's own color */
+html:has(body.ox-follow-vscode),
+body.ox-follow-vscode {
+	background: var(--vscode-editor-background);
+}
+
+/* Follow the VS Code theme: Oxygen's surfaces and text take VS Code's colors; phase colors keep their meaning. */
+body.ox-follow-vscode .ox-root,
+body.ox-follow-vscode .ox-dock {
+	--ox-night: var(--vscode-editor-background);
+	--ox-bg: var(--vscode-editor-background);
+	--ox-panel: var(--vscode-sideBar-background, var(--vscode-editor-background));
+	--ox-dusk: var(--vscode-editorWidget-background);
+	--ox-raised: var(--vscode-editorWidget-background);
+	--ox-input: var(--vscode-input-background);
+	--ox-input-hover: var(--vscode-input-background);
+	--ox-float: var(--vscode-editorWidget-background);
+	--ox-frost: var(--vscode-foreground);
+	--ox-code-fg: var(--vscode-editor-foreground);
+	--ox-haze: var(--vscode-descriptionForeground);
+	--ox-text-dim: var(--vscode-disabledForeground, var(--vscode-descriptionForeground));
+	--ox-lox: var(--vscode-focusBorder);
+	--ox-rule: var(--vscode-panel-border, var(--vscode-widget-border, rgba(128, 128, 128, 0.25)));
+	--ox-rule-strong: var(--vscode-widget-border, var(--vscode-panel-border, rgba(128, 128, 128, 0.4)));
+	--ox-selection: var(--vscode-editor-selectionBackground);
+	--ox-hover: var(--vscode-list-hoverBackground);
+	--ox-active: var(--vscode-list-activeSelectionBackground);
+	--ox-error: var(--vscode-editorError-foreground);
+	--ox-warning: var(--vscode-editorWarning-foreground);
+	--ox-font-ui: var(--vscode-font-family);
+	--ox-ui-size: var(--vscode-font-size, 13px);
+	--ox-code-size: var(--vscode-editor-font-size, 13px);
+}
+
+/* light themes: syntax and phase colors darkened for contrast on light surfaces */
+body.ox-follow-vscode.vscode-light .ox-root,
+body.ox-follow-vscode.vscode-high-contrast-light .ox-root {
+	--ox-phase-setup: #6a4fd6;
+	--ox-phase-emitter: #0f8a7c;
+	--ox-phase-particle: #4d7d1c;
+	--ox-phase-render: #b2368f;
+	--ox-syn-variable: #1f5fa8;
+	--ox-syn-temp: #7a3fb8;
+	--ox-syn-context: #a33a6e;
+	--ox-syn-query: #0f7a6c;
+	--ox-syn-math: #3f7a1f;
+	--ox-syn-number: #a5540f;
+	--ox-syn-string: #8a6d00;
+	--ox-syn-keyword: #b3264a;
+	--ox-syn-comment: #6b7280;
+	--ox-syn-bracket-0: #333a4a;
+	--ox-syn-bracket-1: #a5540f;
+	--ox-syn-bracket-2: #1f5fa8;
+	--ox-hatch: repeating-linear-gradient(-45deg, rgba(31, 95, 168, 0.16) 0 4px, transparent 4px 8px);
+	color-scheme: light;
+}

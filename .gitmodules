@@ -1,0 +1,6 @@
+[submodule "vendor/molangjs"]
+	path = vendor/molangjs
+	url = https://github.com/dev-hydrogen/oxygen-molangjs.git
+[submodule "vendor/wintersky"]
+	path = vendor/wintersky
+	url = https://github.com/dev-hydrogen/oxygen-wintersky.git

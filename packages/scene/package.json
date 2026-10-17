@@ -1,0 +1,18 @@
+{
+	"name": "@oxygen/scene",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"description": "Oxygen preview scene: block world, .mcstructure import, entity dummy, motion paths, NBT",
+	"main": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./nbt": "./src/nbt.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit -p ."
+	},
+	"dependencies": {
+		"wintersky": "workspace:*"
+	}
+}

@@ -1,3 +1,20 @@
-node_modules
-dist/plain-report.txt
-dist/images
+node_modules/
+dist/
+out/
+.vite/
+coverage/
+*.log
+*.vsix
+.DS_Store
+# generated metadata cache (Mojang bedrock-samples, fetched at build time; EULA — not vendored)
+packages/metadata/cache/
+# generated test pack output
+packages/testpack/out/
+# local playwright artifacts
+test-results/
+playwright-report/
+packages/metadata/generated/
+# VS Code builds downloaded by @vscode/test-electron
+.vscode-test/
+# packaged desktop app (electron-builder)
+apps/desktop/release/

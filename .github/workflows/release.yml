@@ -1,0 +1,107 @@
+name: Release
+
+# Push a tag like v0.1.0 to build the desktop app on Windows, macOS and Linux and the VS Code extension, and
+# create a draft GitHub release with all of them. Review the draft and publish it from the Releases page.
+# Run it by hand (Actions › Release › Run workflow) to only build everything: the files are the run's artifacts.
+#
+# Publishing the extension is automatic when these repository secrets exist (otherwise those steps are skipped):
+#   VSCE_PAT  an Azure DevOps token with Marketplace › Manage, for the Visual Studio Marketplace
+#   OVSX_PAT  an Open VSX access token
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extension:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: pnpm package:vscode
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vsix
+          path: apps/vscode/*.vsix
+
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: pnpm package:desktop
+        env:
+          # no signing certificate yet: build unsigned instead of looking for one in the keychain
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.os }}
+          path: |
+            apps/desktop/release/*.exe
+            apps/desktop/release/*.dmg
+            apps/desktop/release/*.AppImage
+
+  release:
+    needs: [extension, desktop]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Draft the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          # the release notes are the newest section of CHANGELOG.md
+          awk '/^## /{n++} n==1' CHANGELOG.md | tail -n +2 > notes.md
+          gh release create "$TAG" dist/* --draft --title "Oxygen ${TAG#v}" --notes-file notes.md
+
+  publish-extension:
+    needs: extension
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: vsix
+      - name: Visual Studio Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          if [ -z "$VSCE_PAT" ]; then echo "::notice::VSCE_PAT isn't set: skipping the Marketplace."; exit 0; fi
+          npx --yes @vscode/vsce publish --packagePath *.vsix
+      - name: Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if [ -z "$OVSX_PAT" ]; then echo "::notice::OVSX_PAT isn't set: skipping Open VSX."; exit 0; fi
+          npx --yes ovsx publish *.vsix

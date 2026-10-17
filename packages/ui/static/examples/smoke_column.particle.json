@@ -1,0 +1,67 @@
+{
+	"format_version": "1.10.0",
+	"particle_effect": {
+		"description": {
+			"identifier": "oxygen:smoke_column",
+			"basic_render_parameters": {
+				"material": "particles_blend",
+				"texture": "textures/particle/particles"
+			}
+		},
+		"components": {
+			"minecraft:emitter_rate_steady": {
+				"spawn_rate": 46,
+				"max_particles": 400
+			},
+			"minecraft:emitter_lifetime_looping": {
+				"active_time": 10
+			},
+			"minecraft:emitter_shape_disc": {
+				"offset": [0, 0.3, 0],
+				"radius": 0.35,
+				"plane_normal": [0, 1, 0],
+				"direction": [0, 1, 0]
+			},
+			"minecraft:particle_lifetime_expression": {
+				"max_lifetime": "4.5 + v.particle_random_1 * 2"
+			},
+			"minecraft:particle_initial_speed": "0.7 + v.particle_random_2 * 0.4",
+			"minecraft:particle_initial_spin": {
+				"rotation": "v.particle_random_3 * 360",
+				"rotation_rate": "(v.particle_random_4 - 0.5) * 40"
+			},
+			"minecraft:particle_motion_dynamic": {
+				"linear_acceleration": ["0.15 + math.sin(v.particle_age * 110 + v.particle_random_3 * 360) * 1.1", 0.25, "math.cos(v.particle_age * 95 + v.particle_random_4 * 360) * 1.1"],
+				"linear_drag_coefficient": 0.35
+			},
+			"minecraft:particle_appearance_billboard": {
+				"size": [
+					"(0.14 + math.pow(v.particle_age / v.particle_lifetime, 0.8) * 0.85) * (0.6 + v.particle_random_1 * 0.8)",
+					"(0.14 + math.pow(v.particle_age / v.particle_lifetime, 0.8) * 0.85) * (0.6 + v.particle_random_1 * 0.8)"
+				],
+				"facing_camera_mode": "rotate_xyz",
+				"uv": {
+					"texture_width": 128,
+					"texture_height": 128,
+					"uv": [32, 16],
+					"uv_size": [32, 32]
+				}
+			},
+			"minecraft:particle_appearance_tinting": {
+				"color": {
+					"interpolant": "v.particle_age / v.particle_lifetime",
+					"gradient": {
+						"0.0": "#00FFB066",
+						"0.06": "#99FF8A3D",
+						"0.2": "#664A3F3A",
+						"0.55": "#406E6A66",
+						"1.0": "#00A8A49E"
+					}
+				}
+			}
+		}
+	},
+	"oxygen": {
+		"cameras": [{ "name": "Column", "position": [4.4, 2.6, 5.6], "target": [0.4, 2.6, 0] }]
+	}
+}

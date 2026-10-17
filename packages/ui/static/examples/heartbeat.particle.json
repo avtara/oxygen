@@ -1,0 +1,119 @@
+{
+	"format_version": "1.10.0",
+	"particle_effect": {
+		"description": {
+			"identifier": "oxygen:heartbeat",
+			"basic_render_parameters": {
+				"material": "particles_add",
+				"texture": "textures/particle/particles"
+			}
+		},
+		"curves": {
+			"variable.beat": {
+				"type": "bezier_chain",
+				"input": "math.mod(v.emitter_age, 1.1)",
+				"nodes": {
+					"0.0": {
+						"value": 0,
+						"slope": 0
+					},
+					"0.1": {
+						"left_value": 0,
+						"right_value": 1,
+						"left_slope": 0,
+						"right_slope": -5
+					},
+					"0.3": {
+						"value": 0.12,
+						"slope": -0.4
+					},
+					"0.38": {
+						"left_value": 0.1,
+						"right_value": 0.72,
+						"left_slope": 0,
+						"right_slope": -4
+					},
+					"0.6": {
+						"value": 0.05,
+						"slope": -0.2
+					},
+					"1.1": {
+						"value": 0,
+						"slope": 0
+					}
+				}
+			}
+		},
+		"components": {
+			"minecraft:emitter_initialization": {
+				"creation_expression": "v.outline = 140;",
+				"per_update_expression": "v.next = 0; v.next_render = 0;"
+			},
+			"minecraft:emitter_rate_instant": {
+				"num_particles": "v.outline + 60"
+			},
+			"minecraft:emitter_lifetime_looping": {
+				"active_time": 10
+			},
+			"minecraft:emitter_shape_point": {},
+			"minecraft:particle_lifetime_expression": {
+				"max_lifetime": 10
+			},
+			"minecraft:particle_initialization": {
+				"per_update_expression": "v.k = v.next; v.next = v.next + 1; v.inner = v.k >= v.outline; v.t = (v.inner ? v.particle_random_1 : v.k / v.outline) * 360; v.hx = 16 * math.pow(math.sin(v.t), 3); v.hy = 13 * math.cos(v.t) - 5 * math.cos(v.t * 2) - 2 * math.cos(v.t * 3) - math.cos(v.t * 4); v.shrink = v.inner ? 0.25 + v.particle_random_2 * 0.6 : 1; v.scale = 0.085 * (1 + 0.16 * v.beat) * v.shrink;",
+				"per_render_expression": "v.inner = v.next_render >= v.outline; v.next_render = v.next_render + 1;"
+			},
+			"minecraft:particle_motion_parametric": {
+				"relative_position": [
+					"v.hx * v.scale",
+					"1.6 + v.hy * v.scale",
+					"0"
+				]
+			},
+			"minecraft:particle_appearance_billboard": {
+				"size": [
+					"v.inner ? 0.42 : 0.06 + 0.03 * v.beat",
+					"v.inner ? 0.42 : 0.06 + 0.03 * v.beat"
+				],
+				"facing_camera_mode": "rotate_xyz",
+				"uv": {
+					"texture_width": 128,
+					"texture_height": 128,
+					"uv": [
+						32,
+						16
+					],
+					"uv_size": [
+						32,
+						32
+					]
+				}
+			},
+			"minecraft:particle_appearance_tinting": {
+				"color": [
+					"1",
+					"v.inner ? 0.22 : 0.42 + 0.3 * v.beat",
+					"v.inner ? 0.42 : 0.55 + 0.2 * v.beat",
+					"math.min(v.particle_age * 2, 1) * (v.inner ? 0.06 + 0.12 * v.beat : 0.55 + 0.45 * v.beat)"
+				]
+			}
+		}
+	},
+	"oxygen": {
+		"cameras": [
+			{
+				"name": "Front",
+				"position": [
+					0,
+					1.7,
+					4.6
+				],
+				"target": [
+					0,
+					1.5,
+					0
+				]
+			}
+		]
+	}
+}

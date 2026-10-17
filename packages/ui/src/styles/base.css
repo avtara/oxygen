@@ -1,0 +1,68 @@
+/* Global base for the Oxygen app shell */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	/* VS Code gives webviews 20px of side padding, which showed as empty bands */
+	padding: 0;
+	height: 100%;
+	background: var(--ox-bg);
+	color: var(--ox-frost);
+	font-size: var(--ox-ui-size);
+	line-height: var(--ox-ui-line);
+	-webkit-font-smoothing: antialiased;
+	overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+	font: inherit;
+	color: inherit;
+}
+
+:focus-visible {
+	outline: 2px solid var(--ox-lox);
+	outline-offset: 1px;
+}
+
+::selection {
+	background: var(--ox-selection);
+}
+
+/* thin scrollbars that recede */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--ox-rule-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+	}
+}
+
+/* dockview tab tweaks: sentence-case titles, quiet chrome */
+.ox-dock .dv-tab {
+	padding: 0 10px;
+	font-weight: 500;
+}
+.ox-dock .dv-tabs-and-actions-container {
+	border-bottom: 1px solid var(--ox-rule);
+}
+.ox-dock .dv-default-tab .dv-default-tab-action {
+	opacity: 0;
+}
+.ox-dock .dv-tab:hover .dv-default-tab-action,
+.ox-dock .dv-active-tab .dv-default-tab-action {
+	opacity: 0.7;
+}

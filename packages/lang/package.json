@@ -1,0 +1,26 @@
+{
+	"name": "@oxygen/lang",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"description": "Molang language service for CodeMirror 6: highlighting, rainbow brackets, completion, hover, signature help, diagnostics, formatting",
+	"main": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./service": "./src/service.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit -p ."
+	},
+	"dependencies": {
+		"@codemirror/autocomplete": "^6.20.3",
+		"@codemirror/commands": "^6.11.1",
+		"@codemirror/language": "^6.13.1",
+		"@codemirror/lint": "^6.9.7",
+		"@codemirror/search": "^6.7.2",
+		"@codemirror/state": "^6.7.6",
+		"@codemirror/view": "^6.43.14",
+		"@oxygen/metadata": "workspace:*",
+		"molangjs": "workspace:*"
+	}
+}
