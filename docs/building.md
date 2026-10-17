@@ -103,8 +103,8 @@ automation server for screenshots and input (`tools/bedrock-mcp.mjs` is its clie
 `.github/workflows/release.yml` makes a release from a version tag:
 
 1. Set the same `version` in `apps/vscode/package.json` and `apps/desktop/package.json`, and add a section for
-   it at the top of `CHANGELOG.md`.
-2. Tag and push: `git tag v0.1.0 && git push origin v0.1.0`.
+   it at the top of `CHANGELOG.md` (drop the "(unreleased)" from its heading).
+2. Tag and push: `git tag 0.1.1 && git push origin 0.1.1`.
 3. The workflow builds the desktop app on Windows, macOS and Linux and the VS Code extension, then creates a
    draft release with the newest changelog section as its notes. Check the draft on the Releases page and
    publish it.

@@ -1,6 +1,6 @@
 name: Release
 
-# Push a tag like v0.1.0 to build the desktop app on Windows, macOS and Linux and the VS Code extension, and
+# Push a version tag like 0.1.1 to build the desktop app on Windows, macOS and Linux and the VS Code extension, and
 # create a draft GitHub release with all of them. Review the draft and publish it from the Releases page.
 # Run it by hand (Actions › Release › Run workflow) to only build everything: the files are the run's artifacts.
 #
@@ -9,7 +9,7 @@ name: Release
 #   OVSX_PAT  an Open VSX access token
 on:
   push:
-    tags: ['v*']
+    tags: ['[0-9]*', 'v*']
   workflow_dispatch:
 
 permissions:
@@ -68,7 +68,7 @@ jobs:
 
   release:
     needs: [extension, desktop]
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -87,7 +87,7 @@ jobs:
 
   publish-extension:
     needs: extension
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4

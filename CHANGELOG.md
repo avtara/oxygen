@@ -1,5 +1,11 @@
 # Changelog
 
+## Oxygen 0.1.1 (unreleased)
+
+### Added
+
+### Fixed
+
 ## Oxygen 0.1.0
 
 The first release of Oxygen, a ground-up rewrite of [Snowstorm](https://github.com/JannisX11/snowstorm) 3.2.2.
