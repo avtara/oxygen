@@ -26,6 +26,8 @@ desktop app.
 - **Build whole effects.** Curves, events, child effects, textures and flipbooks, blocks and a moving entity in
   the scene, and a Vibrant Visuals preview with glow.
 
+[Join the discord!](https://discord.gg/TEq6PNb25T)
+
 ## Get Oxygen
 
 **Web.** Open the web app in any modern browser (Chrome, Edge or Firefox). Pick an example or start a new
