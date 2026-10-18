@@ -112,6 +112,19 @@ automation server for screenshots and input (`tools/bedrock-mcp.mjs` is its clie
 If the repository has `VSCE_PAT` and `OVSX_PAT` secrets, the same tag also publishes the extension to the
 Visual Studio Marketplace and Open VSX.
 
+## The web app on Cloudflare
+
+The web app is served at [oxygen.hydrogen.exposed](https://oxygen.hydrogen.exposed) as a static Cloudflare
+Worker. `apps/web/cloudflare.config.ts` names the Worker and its domain. To publish the current state, sign in
+with the [`cf` CLI](https://developers.cloudflare.com/cf/) (`npx cf auth login`) and run:
+
+```sh
+pnpm --filter @oxygen/web run deploy
+```
+
+This builds with `--mode cloudflare`, which adds the Cloudflare Vite plugin, into `apps/web/.cloudflare/`, then
+uploads it. A plain `vite build` is unaffected and still produces `apps/web/dist/`.
+
 ## Other tools
 
 - `tools/logo.mjs` and `tools/icons.mjs` render the logos and the app icons.

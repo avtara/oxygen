@@ -10,6 +10,8 @@ allowBuilds:
   # Squirrel installer tooling electron-builder ships; the NSIS, dmg and AppImage builds don't use it
   electron-winstaller: false
   esbuild: true
+  # the Workers runtime the Cloudflare Vite plugin builds the web app with
+  workerd: true
 
 minimumReleaseAgeExclude:
   - dockview-core@8.6.0

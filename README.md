@@ -30,14 +30,14 @@ desktop app.
 
 ## Get Oxygen
 
-**Web.** Open the web app in any modern browser (Chrome, Edge or Firefox). Pick an example or start a new
-effect, then use File › Open files or Open resource pack folder for your own. In Chrome and Edge, Oxygen saves
-straight back into the pack; in other browsers, Save downloads the file. The app can be installed from the
-browser's address bar to work offline.
+**Web.** Open [oxygen.hydrogen.exposed](https://oxygen.hydrogen.exposed) in any modern browser (Chrome, Edge or
+Firefox). Pick an example or start a new effect, then use File › Open files or Open resource pack folder for your
+own. In Chrome and Edge, Oxygen saves straight back into the pack; in other browsers, Save downloads the file. The
+app can be installed from the browser's address bar to work offline.
 
-**VS Code.** Install **Oxygen** from the Extensions view (Visual Studio Marketplace or Open VSX), or install a
-`.vsix` with *Extensions: Install from VSIX…*. Files named `*.particle.json` open in Oxygen. For other particle
-files, run *Open in Oxygen* from the command palette, or keep the text editor and run *Show preview*. The text
+**VS Code.** Install **Oxygen Particle Editor** from the Extensions view (Visual Studio Marketplace or Open VSX), or
+install a `.vsix` with *Extensions: Install from VSIX…*. Files named `*.particle.json` open in Oxygen. For other
+particle files, run *Open in Oxygen* from the command palette, or keep the text editor and run *Show preview*. The text
 editor also gets Molang completion, hover help and problems. *Oxygen: Open example…* (or the editor's Examples
 menu) opens one of the bundled examples as a new file you can save into your pack.
 

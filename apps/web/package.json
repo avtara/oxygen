@@ -8,14 +8,17 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-		"typecheck": "svelte-check --tsconfig ./tsconfig.json"
+		"typecheck": "svelte-check --tsconfig ./tsconfig.json",
+		"deploy": "cf deploy --mode cloudflare"
 	},
 	"dependencies": {
 		"@oxygen/effect": "workspace:*",
 		"@oxygen/ui": "workspace:*"
 	},
 	"devDependencies": {
+		"@cloudflare/vite-plugin": "2.0.0-beta.v.1",
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"cf": "1.0.0-beta.18",
 		"svelte": "^5.57.2",
 		"svelte-check": "^4.7.7",
 		"typescript": "6.0.3",

@@ -4,6 +4,8 @@
 
 ### Added
 
+- The web app is online at [oxygen.hydrogen.exposed](https://oxygen.hydrogen.exposed).
+
 ### Fixed
 
 ## Oxygen 0.1.0

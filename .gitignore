@@ -18,3 +18,5 @@ packages/metadata/generated/
 .vscode-test/
 # packaged desktop app (electron-builder)
 apps/desktop/release/
+# Cloudflare build output (apps/web deploy)
+.cloudflare/
