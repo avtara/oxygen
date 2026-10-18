@@ -1,0 +1,90 @@
+{
+	"format_version": "1.10.0",
+	"particle_effect": {
+		"description": {
+			"identifier": "poc:sao_death",
+			"basic_render_parameters": {
+				"material": "particles_add",
+				"texture": "textures/particle/sao_death"
+			}
+		},
+		"components": {
+			"minecraft:emitter_initialization": {
+				"per_update_expression": "v.nu = 0; v.nr = 0;"
+			},
+			"minecraft:emitter_rate_instant": {
+				"num_particles": 493
+			},
+			"minecraft:emitter_lifetime_once": {
+				"active_time": 2.7
+			},
+			"minecraft:emitter_shape_point": {},
+			"minecraft:particle_lifetime_expression": {
+				"max_lifetime": 2.6
+			},
+			"minecraft:particle_initialization": {
+				"per_update_expression": "v.k = v.nu; v.nu = v.nu + 1; v.face = v.k < 72; v.flash = v.k == 72; v.p = v.face ? math.floor(v.k / 12) : (v.particle_random_1 < 0.3077 ? 0 : (v.particle_random_1 < 0.5385 ? 1 : (v.particle_random_1 < 0.6538 ? 2 : (v.particle_random_1 < 0.7692 ? 3 : (v.particle_random_1 < 0.8846 ? 4 : 5))))); v.f = math.mod(v.k, 12); v.a = math.mod(v.f, 6); v.ax = math.floor(v.a / 2); v.sg = math.mod(v.a, 2) == 0 ? 1 : -1; v.hx = v.p < 2 ? 4 : 2; v.hy = v.p == 0 ? 4 : 6; v.hz = v.p == 0 ? 4 : 2; v.cx = v.p == 2 ? -6 : (v.p == 3 ? 6 : (v.p == 4 ? -2 : (v.p == 5 ? 2 : 0))); v.cy = v.p == 0 ? 28 : (v.p < 4 ? 18 : 6); v.sx = v.cx + (math.mod(v.particle_random_2 * 7.31, 1) * 2 - 1) * v.hx; v.sy = v.cy + (math.mod(v.particle_random_3 * 5.17, 1) * 2 - 1) * v.hy; v.sz = (math.mod(v.particle_random_2 * 3.7 + v.particle_random_3 * 11.3, 1) * 2 - 1) * v.hz; v.dx = v.sx * 1.6 + (math.mod(v.particle_random_4 * 13.1, 1) - 0.5) * 8; v.dy = (v.sy - 17) * 0.12 + 2.5 + (math.mod(v.particle_random_4 * 7.7, 1) - 0.3) * 6; v.dz = v.sz * 1.6 + (math.mod(v.particle_random_4 * 5.3, 1) - 0.5) * 8; v.len = math.sqrt(v.dx * v.dx + v.dy * v.dy + v.dz * v.dz) + 0.001; v.tau = math.max(v.particle_age - 0.3, 0); v.go = (1.0 + 1.8 * math.mod(v.particle_random_4 * 3.3, 1)) * (1 - math.exp(-2.4 * v.tau)) / 2.4; v.px = v.face ? (v.cx + (v.ax == 0 ? v.sg * v.hx : 0)) / 16 : (v.flash ? 0 : v.sx / 16 + v.dx / v.len * v.go); v.py = v.face ? (v.cy + (v.ax == 1 ? v.sg * v.hy : 0)) / 16 : (v.flash ? 1.15 : math.max(v.sy / 16 + v.dy / v.len * v.go - 0.05 * v.tau * v.tau, 0.02)); v.pz = v.face ? (v.ax == 2 ? v.sg * v.hz : 0) / 16 : (v.flash ? 0 : v.sz / 16 + v.dz / v.len * v.go);",
+				"per_render_expression": "v.kr = v.nr; v.nr = v.nr + 1; v.rface = v.kr < 72; v.rflash = v.kr == 72; v.p = math.floor(v.kr / 12); v.f = math.mod(v.kr, 12); v.a = math.mod(v.f, 6); v.ax = math.floor(v.a / 2); v.sg = math.mod(v.a, 2) == 0 ? 1 : -1; v.hx = v.p < 2 ? 4 : 2; v.hy = v.p == 0 ? 4 : 6; v.hz = v.p == 0 ? 4 : 2; v.n = v.sg * (v.f >= 6 ? -1 : 1); v.t = v.particle_age; v.ramp = math.clamp((v.t - 0.12) / 0.16, 0, 1); v.w = (v.ax == 0 ? v.hz : v.hx) / 16; v.h = (v.ax == 1 ? v.hz : v.hy) / 16; v.th = v.particle_random_1 * 360 + v.t * (220 + 420 * v.particle_random_2) * (v.particle_random_3 < 0.5 ? -1 : 1); v.ph = v.particle_random_4 * 360 + v.t * 170; v.fade = math.clamp(1 - (v.t - 0.3) / (1.1 + 0.9 * v.particle_random_4), 0, 1);"
+			},
+			"minecraft:particle_motion_parametric": {
+				"relative_position": [
+					"v.px",
+					"v.py",
+					"v.pz"
+				]
+			},
+			"minecraft:particle_appearance_billboard": {
+				"size": [
+					"v.rface ? (v.t < 0.3 ? v.w : 0) : (v.rflash ? (v.t > 0.1 && v.t < 0.62 ? 0.95 : 0) : (v.t >= 0.3 && v.fade > 0 ? 0.07 + 0.07 * math.mod(v.particle_random_3 * 9.7, 1) : 0))",
+					"v.rface ? (v.t < 0.3 ? v.h : 0) : (v.rflash ? (v.t > 0.1 && v.t < 0.62 ? 0.95 : 0) : (v.t >= 0.3 && v.fade > 0 ? 0.07 + 0.07 * math.mod(v.particle_random_3 * 9.7, 1) : 0))"
+				],
+				"facing_camera_mode": "direction_z",
+				"direction": {
+					"mode": "custom",
+					"custom_direction": [
+						"v.rface ? (v.ax == 0 ? v.n : 0) : math.cos(v.th) * math.cos(v.ph)",
+						"v.rface ? (v.ax == 1 ? -v.n : 0) : math.sin(v.ph) * 0.98",
+						"v.rface ? (v.ax == 2 ? v.n : 0) : math.sin(v.th) * math.cos(v.ph)"
+					]
+				},
+				"uv": {
+					"texture_width": 64,
+					"texture_height": 64,
+					"uv": [
+						"v.rface ? 0 : 48",
+						"v.rface || !v.rflash ? 0 : 16"
+					],
+					"uv_size": [
+						"v.rface ? v.w * 128 : 16",
+						"v.rface ? v.h * 128 : 16"
+					]
+				}
+			},
+			"minecraft:particle_appearance_tinting": {
+				"color": [
+					"v.rface ? 0.45 + 0.25 * v.ramp : (v.rflash ? 0.55 : 0.6 + 0.3 * math.mod(v.particle_random_2 * 4.1, 1))",
+					"v.rface ? 0.8 + 0.12 * v.ramp : (v.rflash ? 0.88 : 0.93)",
+					"1",
+					"v.rface ? 0.45 + 0.3 * v.ramp : (v.rflash ? (v.t < 0.3 ? v.ramp : math.max(0, 1 - (v.t - 0.3) / 0.32)) * 0.9 : v.fade * (0.7 + 0.3 * math.mod(v.particle_random_2 * 5.3, 1)))"
+				]
+			}
+		}
+	},
+	"oxygen": {
+		"cameras": [
+			{
+				"name": "Front",
+				"position": [
+					1.6,
+					2.2,
+					4.8
+				],
+				"target": [
+					0,
+					1,
+					0
+				]
+			}
+		]
+	}
+}

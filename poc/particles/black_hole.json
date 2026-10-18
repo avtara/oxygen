@@ -1,0 +1,71 @@
+{
+	"format_version": "1.10.0",
+	"particle_effect": {
+		"description": {
+			"identifier": "poc:black_hole",
+			"basic_render_parameters": {
+				"material": "particles_add",
+				"texture": "textures/particle/particles"
+			}
+		},
+		"components": {
+			"minecraft:emitter_initialization": {
+				"creation_expression": "v.view_yaw = v.view_yaw ?? 0;"
+			},
+			"minecraft:emitter_rate_steady": {
+				"spawn_rate": 260,
+				"max_particles": 1000
+			},
+			"minecraft:emitter_lifetime_looping": {
+				"active_time": 10
+			},
+			"minecraft:emitter_shape_point": {},
+			"minecraft:particle_lifetime_expression": {
+				"max_lifetime": "v.particle_random_4 < 0.62 ? 3.5 + v.particle_random_1 * 1.5 : 2 + v.particle_random_1"
+			},
+			"minecraft:particle_initialization": {
+				"per_update_expression": "v.t = v.particle_age / v.particle_lifetime; v.g = v.particle_random_4 > 0.55 && v.particle_random_4 < 0.62; v.k = v.particle_random_4 < 0.62 ? 0 : (v.particle_random_4 < 0.9 ? 1 : 2); v.cy = v.view_yaw; v.cp = 0; v.dx = -math.sin(v.cy); v.dy = 0; v.dz = math.cos(v.cy); v.rx = math.cos(v.cy); v.rz = math.sin(v.cy); v.r = v.k == 0 ? (1.0 + 2.4 * math.pow(v.particle_random_2, 1.4)) * (1 - 0.18 * v.t) : (v.k == 1 ? 0.9 + 0.6 * math.pow(v.particle_random_2, 1.8) : 0.84 + 0.04 * v.particle_random_2); v.a = v.particle_random_3 * 360 + v.particle_age * (v.k == 0 ? 260 / math.pow(v.r, 1.5) : (v.k == 1 ? 70 : 110)); v.ca = math.cos(v.a); v.sa = math.sin(v.a); v.px = v.k == 0 ? v.ca * v.r : v.rx * v.ca * v.r; v.py = v.k == 0 ? (v.particle_random_1 - 0.5) * 0.04 : v.sa * v.r; v.pz = v.k == 0 ? v.sa * v.r : v.rz * v.ca * v.r; v.al = v.px * v.dx + v.pz * v.dz; v.hid = v.k == 0 && v.al < 0 && v.r * v.r - v.al * v.al < 0.64; v.heat = v.k == 0 ? math.clamp((3.4 - v.r) / 2.4, 0, 1) : (v.k == 1 ? math.clamp(1 - (v.r - 0.9) / 0.6, 0, 1) : 1);",
+				"per_render_expression": "v.t = v.particle_age / v.particle_lifetime; v.g = v.particle_random_4 > 0.55 && v.particle_random_4 < 0.62; v.k = v.particle_random_4 < 0.62 ? 0 : (v.particle_random_4 < 0.9 ? 1 : 2); v.cy = v.view_yaw; v.cp = 0; v.dx = -math.sin(v.cy); v.dy = 0; v.dz = math.cos(v.cy); v.rx = math.cos(v.cy); v.rz = math.sin(v.cy); v.r = v.k == 0 ? (1.0 + 2.4 * math.pow(v.particle_random_2, 1.4)) * (1 - 0.18 * v.t) : (v.k == 1 ? 0.9 + 0.6 * math.pow(v.particle_random_2, 1.8) : 0.84 + 0.04 * v.particle_random_2); v.a = v.particle_random_3 * 360 + v.particle_age * (v.k == 0 ? 260 / math.pow(v.r, 1.5) : (v.k == 1 ? 70 : 110)); v.ca = math.cos(v.a); v.sa = math.sin(v.a); v.px = v.k == 0 ? v.ca * v.r : v.rx * v.ca * v.r; v.py = v.k == 0 ? (v.particle_random_1 - 0.5) * 0.04 : v.sa * v.r; v.pz = v.k == 0 ? v.sa * v.r : v.rz * v.ca * v.r; v.al = v.px * v.dx + v.pz * v.dz; v.hid = v.k == 0 && v.al < 0 && v.r * v.r - v.al * v.al < 0.64; v.heat = v.k == 0 ? math.clamp((3.4 - v.r) / 2.4, 0, 1) : (v.k == 1 ? math.clamp(1 - (v.r - 0.9) / 0.6, 0, 1) : 1);"
+			},
+			"minecraft:particle_motion_parametric": {
+				"relative_position": [
+					"v.px",
+					"2 + v.py",
+					"v.pz"
+				],
+				"direction": [
+					"v.k == 0 ? -v.sa : -v.rx * v.sa",
+					"v.k == 0 ? 0 : v.ca",
+					"v.k == 0 ? v.ca : -v.rz * v.sa"
+				]
+			},
+			"minecraft:particle_appearance_billboard": {
+				"size": [
+					"v.hid ? 0 : (v.g ? 0.55 : (v.k == 2 ? 0.14 : (v.k == 1 ? 0.24 + v.heat * 0.2 : 0.3 + v.heat * 0.25)))",
+					"v.hid ? 0 : (v.g ? 0.55 : (v.k == 2 ? 0.035 : (v.k == 1 ? 0.06 + v.heat * 0.04 : 0.07 + v.heat * 0.05)))"
+				],
+				"facing_camera_mode": "lookat_direction",
+				"uv": {
+					"texture_width": 128,
+					"texture_height": 128,
+					"uv": [
+						32,
+						16
+					],
+					"uv_size": [
+						32,
+						32
+					]
+				}
+			},
+			"minecraft:particle_appearance_tinting": {
+				"color": [
+					"v.k == 2 ? 1 : 0.75 + 0.25 * v.heat",
+					"v.k == 2 ? 0.95 : 0.18 + 0.72 * v.heat * v.heat",
+					"v.k == 2 ? 0.85 : 0.04 + 0.6 * v.heat * v.heat * v.heat",
+					"math.min(v.t * 6, 1) * (1 - v.t * v.t) * (v.g ? 0.08 : (v.k == 2 ? 0.95 : (v.k == 1 ? 0.35 + 0.55 * v.heat : 0.3 + 0.4 * v.heat)))"
+				]
+			}
+		}
+	}
+}
