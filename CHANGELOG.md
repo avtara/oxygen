@@ -5,6 +5,10 @@
 ### Added
 
 - The web app is online at [oxygen.hydrogen.exposed](https://oxygen.hydrogen.exposed).
+- An MCP server for coding agents (`apps/mcp`): agents can look up the particle format and the game's measured
+  behaviour, create effects from the starting effect or an example, edit them by JSON path without disturbing
+  formatting, check them, simulate them and render previews with Oxygen's viewport. See
+  [Oxygen for coding agents](https://github.com/dev-hydrogen/oxygen/blob/main/docs/agents.md).
 
 ### Fixed
 
