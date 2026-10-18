@@ -179,6 +179,19 @@ export function applyEdits(text: string, ops: EditOp[]): { text: string; diff: s
 }
 
 /**
+ * Check a whole new text for a file the way applyEdits checks an edit, and describe the change in the game's terms
+ * (empty for a new file). Throws when the text isn't valid JSON, so nothing broken gets written.
+ */
+export function rewriteDiff(before: string | null, after: string): string {
+	const doc = new JsonDocument(after);
+	if (doc.problems.length) throw new Error(`The text isn't valid JSON (${doc.problems[0].message} at offset ${doc.problems[0].offset}); nothing was written.`);
+	if (before === null) return '';
+	const old = new JsonDocument(before);
+	// a file that didn't parse before can't be compared field by field
+	return old.problems.length ? "The file before wasn't valid JSON: no field-by-field comparison." : formatDiff(semanticDiff(old.value, doc.value), 'before', 'after');
+}
+
+/**
  * Text for a new effect: Oxygen's starting effect, or a copy of a bundled example under a new identifier.
  * `children` lists the effects the example spawns, which come from the examples unless the pack has them.
  */

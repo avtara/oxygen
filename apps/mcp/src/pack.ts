@@ -87,13 +87,14 @@ export function effectIndex(root: string | null): Map<string, string> {
 }
 
 /**
- * Every effect the events of `text` reach, directly or through other children, as text by identifier. The effect
- * itself is left out: a child spawning it back plays the text being previewed, not the file on disk.
+ * Every effect the events of `text` reach, directly or through other children, plus the effects in `also` (other
+ * effects playing in the scene) and what they reach, as text by identifier. The effect itself is left out: a child
+ * spawning it back plays the text being previewed, not the file on disk.
  */
-export function childEffects(text: string, index: Map<string, string>): { effects: Record<string, string>; missing: string[] } {
+export function childEffects(text: string, index: Map<string, string>, also: readonly string[] = []): { effects: Record<string, string>; missing: string[] } {
 	const effects: Record<string, string> = {};
 	const missing: string[] = [];
-	const pending: string[] = [];
+	const pending: string[] = [...also];
 	const queue = (json: unknown) => pending.push(...(spawnsOf(json)?.spawns ?? []).map((s) => s.effect));
 	const json = parseJsonc(text, [], { allowTrailingComma: true });
 	const root = spawnsOf(json)?.identifier;

@@ -5,11 +5,13 @@ import { basename, dirname, extname, join, resolve } from 'node:path';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { readMeta } from '@oxygen/format';
 import { z } from 'zod';
 import { PreviewBrowser } from './browser';
-import { analyze, applyEdits, formatProblems, load, newEffectText, summarize, type EditOp, type SpawnMode } from './effects';
+import { desktopLaunch, launchDetached } from './desktop';
+import { analyze, applyEdits, formatProblems, load, newEffectText, rewriteDiff, summarize, type EditOp, type SpawnMode } from './effects';
 import { BUNDLED, childEffects, effectIndex, examples, packRoot, textureFile } from './pack';
-import type { CameraRequest, RunRequest, RunResult } from './protocol';
+import type { CameraRequest, RunRequest, RunResult, Vec3 } from './protocol';
 import { reference } from './reference';
 
 const VERSION = '0.1.1';
@@ -21,6 +23,16 @@ const spawnSchema = z
 	.optional()
 	.describe("How the effect is started: 'command' (/particle, the default), 'script' (Script API spawnParticle) or 'entity' (attached to an entity, which loops looping emitters). The file's active scenario can set it too.");
 const pathSchema = z.string().describe('Path to the .particle.json / particles/*.json file (absolute, or relative to the working directory)');
+const othersSchema = z
+	.array(
+		z.object({
+			effect: z.string().describe('Identifier, looked up in the pack, then the bundled examples'),
+			position: z.array(z.number()).length(3).optional().describe('Where it plays (default: 3 blocks apart along +X)'),
+		}),
+	)
+	.max(8)
+	.optional()
+	.describe("Other effects playing in the same scene, like the Scene panel's \"Other effects\". Default: the ones the file's scene keeps; [] for none");
 
 /** Run a tool body, turning a thrown error into a tool error the agent can read */
 async function tool(work: () => Promise<CallToolResult> | CallToolResult): Promise<CallToolResult> {
@@ -47,11 +59,15 @@ function sampleTimes(times: number[] | undefined, duration: number, samples: num
 	return out;
 }
 
-function runRequest(path: string, o: { times: number[]; spawn?: SpawnMode; repeat: boolean; timeOfDay?: number; render: RunRequest['render'] }): { request: RunRequest; missingChildren: string[] } {
+function runRequest(path: string, o: { times: number[]; spawn?: SpawnMode; repeat: boolean; timeOfDay?: number; render: RunRequest['render']; others?: { effect: string; position?: number[] }[] }): { request: RunRequest; missingChildren: string[] } {
 	const e = load(path, o.spawn);
-	const { effects, missing } = childEffects(e.doc.text, effectIndex(e.root));
+	const extras = o.others?.map((x, i) => ({ effect: x.effect, position: (x.position ?? [3 * (i + 1), 0, 0]) as Vec3 })) ?? null;
+	// what plays besides the effect: the effects asked for, else the ones the file's scene keeps
+	const saved = readMeta(e.doc).scene?.extras;
+	const sceneIds = extras ? extras.map((x) => x.effect) : Array.isArray(saved) ? saved.flatMap((x: { effect?: unknown } | null) => (typeof x?.effect === 'string' ? [x.effect] : [])) : [];
+	const { effects, missing } = childEffects(e.doc.text, effectIndex(e.root), sceneIds);
 	return {
-		request: { text: e.doc.text, file: { name: basename(path), id: path }, effects, engine: e.engine, times: o.times, spawn: o.spawn ?? null, repeat: o.repeat, render: o.render, timeOfDay: o.timeOfDay ?? null, parents: e.parents },
+		request: { text: e.doc.text, file: { name: basename(path), id: path }, effects, engine: e.engine, times: o.times, spawn: o.spawn ?? null, repeat: o.repeat, render: o.render, timeOfDay: o.timeOfDay ?? null, parents: e.parents, extras },
 		missingChildren: missing,
 	};
 }
@@ -71,7 +87,7 @@ function report(r: RunResult & { pageErrors: string[] }, path: string, missingCh
 			lines.push(`- ${em.effect}: ${em.count} emitter${em.count === 1 ? '' : 's'}, from ${em.firstStart} s${em.lastEnd !== null ? ` to ${em.lastEnd} s` : ', still running'}${evs.length ? `; events ${evs.join(', ')}` : ''}`);
 		}
 	}
-	if (missingChildren.length) lines.push('', `Child effects not found in the pack or the examples (they don't spawn): ${missingChildren.join(', ')}`);
+	if (missingChildren.length) lines.push('', `Effects not found in the pack or the examples (they don't play): ${missingChildren.join(', ')}`);
 	if (r.missingTextures.length) {
 		const root = packRoot(path);
 		const notes = r.missingTextures.map((t) => `${t}${textureFile(root, t).tga ? ' (only a TGA exists; the preview reads PNG)' : ''}`);
@@ -87,8 +103,9 @@ const server = new McpServer({ name: 'oxygen', version: VERSION }, {
 		'Oxygen is a Minecraft Bedrock particle editor whose engine was checked against the game. Use these tools to author particle effects (JSON files under a resource pack\'s particles/ folder):',
 		'1. reference (topic "components", a component id, "game-rules", "queries") to learn the format and the game\'s real behaviour.',
 		'2. create_effect to start from Oxygen\'s template or a bundled example (list_examples).',
-		'3. edit_effect for formatting-preserving edits by JSON path; read_effect / check_effect to see structure and problems.',
+		'3. edit_effect for formatting-preserving edits by JSON path, write_effect to replace the whole text; read_effect / check_effect to see structure and problems.',
 		'4. simulate_effect for numbers over time (particle counts, bounds, events); preview_effect to see it rendered.',
+		'5. open_in_editor to show the effect to the user in the Oxygen desktop app, which follows later edits live.',
 		'Paths in edits look like components/minecraft:particle_appearance_billboard/size or events/pop/particle_effect/effect.',
 	].join('\n'),
 });
@@ -209,6 +226,35 @@ server.registerTool(
 );
 
 server.registerTool(
+	'write_effect',
+	{
+		title: 'Write a particle effect',
+		description:
+			"Write a particle file's whole text: a new file, or a rewrite where edit_effect would need a long list of edits. The text replaces the file as given (edit_effect keeps the file's formatting and comments; this doesn't). Text that isn't valid JSON is refused. Returns what changed (in the game's terms), or the summary of a new file, and the problems.",
+		inputSchema: {
+			path: pathSchema,
+			text: z.string().describe('The complete file text'),
+			dry_run: z.boolean().optional().describe('Report the change and its problems without writing the file'),
+			include_info: z.boolean().optional(),
+		},
+	},
+	({ path, text: body, dry_run, include_info }) =>
+		tool(() => {
+			const p = resolve(path);
+			if (extname(p) !== '.json') throw new Error('Particle files end in .json (Oxygen opens *.particle.json by default)');
+			const before = existsSync(p) ? readFileSync(p, 'utf8') : null;
+			const diff = rewriteDiff(before, body);
+			if (!dry_run && body !== before) {
+				mkdirSync(dirname(p), { recursive: true });
+				writeFileSync(p, body);
+			}
+			const e = analyze(p, body);
+			const head = dry_run ? 'Dry run: nothing written.' : body === before ? 'No change.' : before === null ? `Created ${p}.` : `Saved ${p}.`;
+			return text([head, '', before === null ? summarize(e) : diff.trimEnd(), '', formatProblems(e.problems, !!include_info)].join('\n'));
+		}),
+);
+
+server.registerTool(
 	'check_effect',
 	{
 		title: 'Check a particle effect',
@@ -232,14 +278,15 @@ server.registerTool(
 			times: z.array(z.number().min(0).max(60)).optional().describe('Exact sample times in seconds (overrides duration and samples)'),
 			spawn: spawnSchema,
 			repeat: z.boolean().optional().describe("Oxygen's Repeat: start the effect again when it ends (default false: /particle plays once, like the game)"),
+			others: othersSchema,
 			include_info: z.boolean().optional(),
 		},
 		annotations: { readOnlyHint: true },
 	},
-	({ path, duration, samples, times, spawn, repeat, include_info }) =>
+	({ path, duration, samples, times, spawn, repeat, others, include_info }) =>
 		tool(async () => {
 			const p = existing(path);
-			const { request, missingChildren } = runRequest(p, { times: sampleTimes(times, duration ?? 3, samples ?? 6), spawn, repeat: !!repeat, render: null });
+			const { request, missingChildren } = runRequest(p, { times: sampleTimes(times, duration ?? 3, samples ?? 6), spawn, repeat: !!repeat, render: null, others });
 			return text(report(await browser.run(request), p, missingChildren, !!include_info));
 		}),
 );
@@ -274,8 +321,10 @@ server.registerTool(
 			gizmos: z.boolean().optional().describe('Draw emitter markers, spawn shapes and the kill plane (default false)'),
 			sheet: z.boolean().optional().describe('One contact sheet (default true) instead of a picture per time'),
 			save_to: z.string().optional().describe('Write the PNG(s) here: a .png file, or a folder for one file per picture'),
+			return_images: z.boolean().optional().describe('Put the pictures in the reply (default true). false needs save_to: only the numbers and the saved paths come back'),
 			spawn: spawnSchema,
 			repeat: z.boolean().optional().describe("Oxygen's Repeat (default false: /particle plays once, like the game)"),
+			others: othersSchema,
 			include_info: z.boolean().optional(),
 		},
 		annotations: { readOnlyHint: false },
@@ -283,6 +332,7 @@ server.registerTool(
 	(a) =>
 		tool(async () => {
 			const p = existing(a.path);
+			if (a.return_images === false && !a.save_to) throw new Error('return_images: false needs save_to, or the pictures would be lost');
 			const c = a.camera ?? {};
 			let camera: CameraRequest;
 			if (c.bookmark) camera = { kind: 'bookmark', name: c.bookmark };
@@ -297,6 +347,7 @@ server.registerTool(
 				repeat: !!a.repeat,
 				timeOfDay: a.time_of_day,
 				render: { width: a.width ?? 480, height: a.height ?? 360, mode: a.mode ?? 'classic', camera, ground: a.ground ?? true, gizmos: !!a.gizmos, sheet },
+				others: a.others,
 			});
 			const r = await browser.run(request);
 			const pngs = r.images.map((url) => url.replace(/^data:image\/png;base64,/, ''));
@@ -314,7 +365,27 @@ server.registerTool(
 				pngs.forEach((b64, i) => writeFileSync(files[i], Buffer.from(b64, 'base64')));
 				lines.push('', `Saved ${files.join(', ')}`);
 			}
-			return { content: [{ type: 'text', text: lines.join('\n') }, ...pngs.map((data) => ({ type: 'image' as const, data, mimeType: 'image/png' }))] };
+			const images = a.return_images === false ? [] : pngs.map((data) => ({ type: 'image' as const, data, mimeType: 'image/png' }));
+			return { content: [{ type: 'text', text: lines.join('\n') }, ...images] };
+		}),
+);
+
+server.registerTool(
+	'open_in_editor',
+	{
+		title: 'Open in Oxygen',
+		description:
+			"Open the file in the Oxygen desktop app for the user: starts the app, or hands the file to the one running, which opens it in a tab or focuses its tab. The app follows the file on disk, so later changes from these tools show there live (a tab with unsaved changes keeps them). Oxygen is found through OXYGEN_DESKTOP (its executable), the desktop build of the repository this server was built in, or an installed app.",
+		inputSchema: { path: pathSchema },
+		annotations: { readOnlyHint: true, openWorldHint: true },
+	},
+	({ path }) =>
+		tool(async () => {
+			const p = existing(path);
+			const launch = desktopLaunch(p);
+			if (!launch) throw new Error('Oxygen desktop not found: install it, build it in this repository (pnpm --filter @oxygen/desktop build), or set OXYGEN_DESKTOP to its executable.');
+			await launchDetached(launch);
+			return text(`Opening ${p} in Oxygen (via ${launch.via}).`);
 		}),
 );
 

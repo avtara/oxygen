@@ -31,6 +31,11 @@ The particle engine and the Molang compiler are Git submodules in `vendor/`. If 
 To try a `.vsix`, install it in VS Code with *Extensions: Install from VSIX…*, or run
 `code --install-extension apps/vscode/oxygen-particle-editor-<version>.vsix`.
 
+`pnpm desktop` downloads Electron into its cache on the first run. Where that cache can't be written (a read-only
+`~/Library/Caches/electron`, for instance), point it elsewhere: `electron_config_cache=/tmp/electron-cache pnpm desktop`.
+Oxygen runs one window at a time: starting it again with a file, as `open_in_editor` does for agents, opens the
+file in the window already running.
+
 ## Tests
 
 | Command | What it checks |

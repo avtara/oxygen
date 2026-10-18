@@ -151,6 +151,8 @@ async function run(req: RunRequest): Promise<RunResult> {
 	session.setParentInputs(req.parents);
 	if (req.timeOfDay !== null) session.timeOfDay = req.timeOfDay;
 	if (req.spawn && session.spawnMode !== req.spawn) session.setSpawnMode(req.spawn);
+	// every play starts with a restart, which spawns these too
+	if (req.extras) session.setScene({ extras: req.extras.length ? req.extras : undefined }, false);
 	session.loopPreview = req.repeat;
 	await new Workspace(host).loadPackVisuals(session);
 

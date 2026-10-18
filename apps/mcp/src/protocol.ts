@@ -39,6 +39,8 @@ export interface RunRequest {
 	timeOfDay: number | null;
 	/** what other effects' pre-effects set for this one (variable → their identifiers) */
 	parents: Record<string, string>;
+	/** other effects playing in the scene, by identifier (their text is in `effects`); null keeps the file's own scene */
+	extras: { effect: string; position: Vec3 }[] | null;
 }
 
 export interface SampleStats {
