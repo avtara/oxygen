@@ -14,7 +14,7 @@ Every effect here was made by a coding agent through the Oxygen MCP server (`cre
 | `references/sao-death-reference.gif` | The animation the SAO death effect was made from |
 | `poc/particles/*.json` | The three effects (`poc:galaxy`, `poc:black_hole`, `poc:sao_death`) |
 | `poc/textures/particle/sao_death.png` | The SAO effect's texture: wireframe grid, triangle shard, glow |
-| `poc/previews/*.png` | `preview_effect` output, including `spiral-galaxy-before-fix.png` (the paused-redraw bug) |
+| `poc/previews/*.png` | `preview_effect` output; `spiral-galaxy-before-fix.png` / `spiral-galaxy-after-fix.png` are the unmodified `spiral_galaxy` example, same camera and time, before and after the paused-redraw fix |
 
 To try the effects, copy `poc/` into a resource pack (`particles/` and `textures/`) and open the JSON files in
 Oxygen.
